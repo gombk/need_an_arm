@@ -1,0 +1,8 @@
+Classe tem que receber:
+    Mapa de String e Int com os comandos
+        - String: A > Servo Inferior Direita; Int: Adiciona grau
+        - String: B > Servo Inferior Esquerda; Int: Remove grau
+        - String: C > Servo Medio Cima; Int: Adiciona grau
+        - String: D > Servo Medio Baixo; Int: Remove grau
+        - String: E > Servo Superior Cima; Int: Adiciona grau
+        - String: F > Servo Superior Baixo; Int: Remove grau
