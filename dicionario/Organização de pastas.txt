@@ -1,0 +1,15 @@
+LIB >
+    Controllers (controladores)
+        controles.dart
+
+    Screens (telas)
+        tela_principal.dart
+        tela_perfil.dart
+        drawer_principal.dart
+        tela_ajuda.dart
+
+    Widgets
+        servo.dart
+        controles.dart
+        slider.dart
+        lista_comandos.dart

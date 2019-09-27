@@ -1,0 +1,6 @@
+Coluna
+    - 3 botões
+    - botões controle
+    - lista de comandos
+    - slider de velocidade
+    - FAB para gravar
