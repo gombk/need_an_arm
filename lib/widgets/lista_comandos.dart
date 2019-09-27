@@ -34,7 +34,7 @@ class _ListaComandosState extends State<ListaComandos> {
                 return showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: Text('Você tem certeza?'),
+                    title: Text('Você tem certeza??'),
                     content: Text('Você quer remover o comando?'),
                     actions: <Widget>[
                       FlatButton(
