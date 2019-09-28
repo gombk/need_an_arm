@@ -6,11 +6,11 @@ class ListaComandos extends StatefulWidget {
 }
 
 class _ListaComandosState extends State<ListaComandos> {
-  List<String> comandos = ['E', 'A', 'B', 'C', 'D'];
+  List<Map<String, int>> comandos;
   Key key;
 
-  Widget texto(List<String> comando, int tempo) {
-    return Text('$comando: $tempo');
+  Widget texto(List<Map<String, int>> comando) {
+    return Text('$comando');
   }
 
   @override
@@ -20,7 +20,9 @@ class _ListaComandosState extends State<ListaComandos> {
         return Column(
           children: <Widget>[
             Dismissible(
-              child: texto(comandos, 0),
+              child: texto([
+                {'a': 0}
+              ]),
               background: Container(
                 child: Icon(
                   Icons.delete,
@@ -57,7 +59,7 @@ class _ListaComandosState extends State<ListaComandos> {
           ],
         );
       },
-      itemCount: comandos.length,
+      itemCount: 1,
     );
   }
 }

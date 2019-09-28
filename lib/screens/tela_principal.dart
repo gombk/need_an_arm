@@ -3,17 +3,21 @@ import 'package:flutter/material.dart';
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
 import '../widgets/lista_comandos.dart';
+import '../models/comandos.dart';
+import '../providers/comandos_provider.dart';
 
 class TelaPrincipal extends StatefulWidget {
+  static const routeName = '/tela-principal';
+
   @override
   _TelaPrincipalState createState() => _TelaPrincipalState();
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
-  static const routeName = '/';
-
   // define o valor do slider, provavelmente será passado para um arquivo de controle
   int _valorSlider = 0;
+  Comandos comandos;
+  ComandosProvider cmdProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +49,14 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              ControlesWidget(
-                  Icons.arrow_left, 110, () {}), // controle esquerda
+              ControlesWidget(Icons.arrow_left, 110, () {
+                Comandos({'A': 0}, _valorSlider);
+              }), // controle esquerda
               ControlesWidget(
                   Icons.radio_button_unchecked, 100, () {}), // controle grab
-              ControlesWidget(
-                  Icons.arrow_right, 110, () {}), // controle direita
+              ControlesWidget(Icons.arrow_right, 110, () {
+                Comandos({'B': 0}, _valorSlider);
+              }), // controle direita
             ],
           ), // fim row
           // controle down
