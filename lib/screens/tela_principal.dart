@@ -50,12 +50,12 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               ControlesWidget(Icons.arrow_left, 110, () {
-                Comandos({'A': 0}, _valorSlider);
+                Comandos({'A': 0});
               }), // controle esquerda
               ControlesWidget(
                   Icons.radio_button_unchecked, 100, () {}), // controle grab
               ControlesWidget(Icons.arrow_right, 110, () {
-                Comandos({'B': 0}, _valorSlider);
+                Comandos({'B': 0});
               }), // controle direita
             ],
           ), // fim row
@@ -65,7 +65,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           Slider(
             value: _valorSlider.toDouble(),
             min: 0.0,
-            max: 100.0,
+            max: 10000.0,
             divisions: 100,
             label: '$_valorSlider',
             onChanged: (double newValue) {
@@ -75,7 +75,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             },
           ),
           Container(
-            height: 50,
+            height: 150,
             width: 300,
             child: Card(
               child: ListaComandos(),

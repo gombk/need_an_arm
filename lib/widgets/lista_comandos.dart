@@ -10,7 +10,12 @@ class _ListaComandosState extends State<ListaComandos> {
   Key key;
 
   Widget texto(List<Map<String, int>> comando) {
-    return Text('$comando');
+    return Text(
+      '$comando',
+      style: TextStyle(
+        fontSize: 20,
+      ),
+    );
   }
 
   @override
