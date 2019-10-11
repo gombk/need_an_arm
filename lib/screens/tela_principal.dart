@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../widgets/controles.dart';
@@ -8,6 +10,9 @@ import '../providers/comandos_provider.dart';
 
 class TelaPrincipal extends StatefulWidget {
   static const routeName = '/tela-principal';
+  final Socket channel;
+
+  TelaPrincipal({Key key, this.channel}) : super(key: key);
 
   @override
   _TelaPrincipalState createState() => _TelaPrincipalState();
@@ -18,6 +23,16 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   int _valorSlider = 0;
   Comandos comandos;
   ComandosProvider cmdProvider;
+
+  void _enviaComando() {
+    widget.channel.write("TESTE\n");
+  }
+
+  @override
+  void dispose() {
+    widget.channel.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +68,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                 Comandos({'A': 0});
               }), // controle esquerda
               ControlesWidget(
-                  Icons.radio_button_unchecked, 100, () {}), // controle grab
+                  Icons.radio_button_unchecked, 100, _enviaComando), // controle grab
               ControlesWidget(Icons.arrow_right, 110, () {
                 Comandos({'B': 0});
               }), // controle direita

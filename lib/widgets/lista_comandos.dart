@@ -6,10 +6,10 @@ class ListaComandos extends StatefulWidget {
 }
 
 class _ListaComandosState extends State<ListaComandos> {
-  List<Map<String, int>> comandos;
+  Map<String, int> comandos;
   Key key;
 
-  Widget texto(List<Map<String, int>> comando) {
+  Widget texto(Map<String, int> comando) {
     return Text(
       '$comando',
       style: TextStyle(
@@ -25,9 +25,9 @@ class _ListaComandosState extends State<ListaComandos> {
         return Column(
           children: <Widget>[
             Dismissible(
-              child: texto([
+              child: texto(
                 {'a': 0}
-              ]),
+              ),
               background: Container(
                 child: Icon(
                   Icons.delete,
@@ -41,7 +41,7 @@ class _ListaComandosState extends State<ListaComandos> {
                 return showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: Text('Você tem certeza??'),
+                    title: Text('Você tem certeza?'),
                     content: Text('Você quer remover o comando?'),
                     actions: <Widget>[
                       FlatButton(
