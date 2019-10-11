@@ -9,15 +9,16 @@ import './screens/splash_screen.dart';
 import './providers/comandos_provider.dart';
 
 void main() async {
-  Socket sock = await Socket.connect('162.168.0.110', 80);
+  Socket sock = await Socket.connect('192.168.0.101', 80);
+
   runApp(MyApp(sock));
 }
 
 class MyApp extends StatelessWidget {
-  Socket sockect;
+  Socket socket;
 
   MyApp(Socket s) {
-    this.sockect = s;
+    this.socket = s;
   }
 
   @override
@@ -33,7 +34,9 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (ctx) => SplashScreen(),
-          TelaPrincipal.routeName: (ctx) => TelaPrincipal(channel: sockect,),
+          TelaPrincipal.routeName: (ctx) => TelaPrincipal(
+                channel: socket,
+              ),
         },
       ),
     );

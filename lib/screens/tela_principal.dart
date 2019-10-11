@@ -67,8 +67,8 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               ControlesWidget(Icons.arrow_left, 110, () {
                 Comandos({'A': 0});
               }), // controle esquerda
-              ControlesWidget(
-                  Icons.radio_button_unchecked, 100, _enviaComando), // controle grab
+              ControlesWidget(Icons.radio_button_unchecked, 100,
+                  _enviaComando), // controle grab
               ControlesWidget(Icons.arrow_right, 110, () {
                 Comandos({'B': 0});
               }), // controle direita
