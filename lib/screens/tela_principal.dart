@@ -24,8 +24,12 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   Comandos comandos;
   ComandosProvider cmdProvider;
 
-  void _enviaComando() {
-    widget.channel.write("TESTE\n");
+  void _add180() {
+    widget.channel.write("a");
+  }
+
+  void _remove180() {
+    widget.channel.write("b");
   }
 
   @override
@@ -64,14 +68,12 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              ControlesWidget(Icons.arrow_left, 110, () {
-                Comandos({'A': 0});
-              }), // controle esquerda
-              ControlesWidget(Icons.radio_button_unchecked, 100,
-                  _enviaComando), // controle grab
-              ControlesWidget(Icons.arrow_right, 110, () {
-                Comandos({'B': 0});
-              }), // controle direita
+              ControlesWidget(
+                  Icons.arrow_left, 110, _add180), // controle esquerda
+              ControlesWidget(
+                  Icons.radio_button_unchecked, 100, () {}), // controle grab
+              ControlesWidget(
+                  Icons.arrow_right, 110, _remove180), // controle direita
             ],
           ), // fim row
           // controle down
