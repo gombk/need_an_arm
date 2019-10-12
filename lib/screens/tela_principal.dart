@@ -9,6 +9,12 @@ import '../widgets/drawer.dart';
 import '../models/comandos.dart';
 import '../providers/comandos_provider.dart';
 
+enum ServoAtivo {
+  Nenhum,
+  Inferior,
+  Superior,
+}
+
 class TelaPrincipal extends StatefulWidget {
   static const routeName = '/tela-principal';
   final Socket channel;
@@ -24,30 +30,8 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   int _valorSlider = 0;
   Comandos comandos;
   ComandosProvider cmdProvider;
-  var _servoSelecionado = 0;
+  var _servoSelecionado = ServoAtivo.Nenhum;
   bool _isLive = false;
-
-  void _servoInfDireito() {
-    widget.channel.write("a");
-  }
-
-  void _servoInfEsquerdo() {
-    widget.channel.write("b");
-  }
-
-  void _servoSupCima() {
-    widget.channel.write('c');
-    widget.channel.write('e');
-  }
-
-  void _servoSupBaixo() {
-    widget.channel.write('d');
-    widget.channel.write('f');
-  }
-
-  void _grab() {
-    widget.channel.write('g');
-  }
 
   @override
   void dispose() {
@@ -60,16 +44,29 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Need an arm'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.restore),
+            onPressed: () {
+              print('Reset');
+              setState(() {
+                _servoSelecionado = ServoAtivo.Nenhum;
+              });
+            },
+          ),
+        ],
       ),
       drawer: AppDrawer(),
-      body: _servoSelecionado == 0 ? mainScreenNull() : mainScreenFunc(),
+      body: _servoSelecionado == ServoAtivo.Nenhum
+          ? mainScreenNull()
+          : mainScreenFunc(),
       // FAB que irá realizar a função de gravar
       // TO DO: se estiver gravando o FAB irá mudar para parar a gravação
       floatingActionButton: _isLive
           ? FloatingActionButton(
               child: Icon(Icons.stop),
               onPressed: () {
-                print('stop');
+                print('Stop recording');
                 setState(() {
                   _isLive = false;
                 });
@@ -78,34 +75,52 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           : FloatingActionButton(
               child: Icon(Icons.add_box),
               // o método onPressed irá abrir um diálogo perguntar se quer começar a gravação
-              onPressed: () => showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text('Gravar comandos'),
-                  content:
-                      Text('Você deseja começar a gravar os seus comandos?'),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('Não'),
-                      onPressed: () {
-                        print('Não');
-                        Navigator.of(ctx).pop();
-                      },
+              onPressed: () {
+                if (_servoSelecionado == ServoAtivo.Nenhum) {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text('Nenhum servo selecionado'),
+                      content: Text(
+                          'Por favor, selecione o servo superior ou inferior acima'),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('Ok'),
+                          onPressed: () => Navigator.of(ctx).pop(),
+                        ),
+                      ],
                     ),
-                    FlatButton(
-                      child: Text('Sim'),
-                      onPressed: () {
-                        print('Sim');
-                        setState(() {
-                          _isLive = true;
-                        });
-                        Navigator.of(ctx).pop();
-                      },
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text('Gravar comandos'),
+                      content: Text(
+                          'Você deseja começar a gravar os seus comandos?'),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('Não'),
+                          onPressed: () {
+                            print('Não');
+                            Navigator.of(ctx).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text('Sim'),
+                          onPressed: () {
+                            print('Sim');
+                            setState(() {
+                              _isLive = true;
+                            });
+                            Navigator.of(ctx).pop();
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  );
+                }
+              }),
     );
   }
 
@@ -123,7 +138,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               padding: const EdgeInsets.all(8.0),
               child: ButtonServoWidget(() {
                 setState(() {
-                  _servoSelecionado = 1;
+                  _servoSelecionado = ServoAtivo.Inferior;
                 });
               }, 'Inferior'),
             ),
@@ -131,26 +146,36 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               padding: const EdgeInsets.all(8.0),
               child: ButtonServoWidget(() {
                 setState(() {
-                  _servoSelecionado = 2;
+                  _servoSelecionado = ServoAtivo.Superior;
                 });
               }, 'Superior'),
             ),
           ],
         ),
-        _servoSelecionado == 2
-            ? ControlesWidget(Icons.arrow_drop_up, 110, _servoSupCima)
+        _servoSelecionado == ServoAtivo.Superior
+            ? ControlesWidget(Icons.arrow_drop_up, 110, () {
+                widget.channel.write('c');
+                widget.channel.write('e');
+                print('Superior Alto C & E');
+              })
             : ControlesWidget(Icons.arrow_drop_up, 110, null), // controle cima
         // row para criar os botões esquerda, grab e direita
-        _servoSelecionado == 1
+        _servoSelecionado == ServoAtivo.Inferior
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  ControlesWidget(Icons.arrow_left, 110,
-                      _servoInfDireito), // controle esquerda
-                  ControlesWidget(Icons.radio_button_unchecked, 100,
-                      _grab), // controle grab
-                  ControlesWidget(Icons.arrow_right, 110,
-                      _servoInfEsquerdo), // controle direita
+                  ControlesWidget(Icons.arrow_left, 110, () {
+                    widget.channel.write('b');
+                    print('Inferior B');
+                  }), // controle esquerda
+                  ControlesWidget(Icons.radio_button_unchecked, 100, () {
+                    widget.channel.write('g');
+                    print('Garra/Grab');
+                  }), // controle grab
+                  ControlesWidget(Icons.arrow_right, 110, () {
+                    widget.channel.write('a');
+                    print('Inferior A');
+                  }) // controle direita
                 ],
               )
             : Row(
@@ -158,16 +183,26 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                 children: <Widget>[
                   ControlesWidget(
                       Icons.arrow_left, 110, null), // controle esquerda
-                  ControlesWidget(Icons.radio_button_unchecked, 100,
-                      _grab), // controle grab
+                  ControlesWidget(
+                    Icons.radio_button_unchecked,
+                    100,
+                    () {
+                      widget.channel.write('G');
+                      print('Garra/Grab');
+                    },
+                  ), // controle grab
                   ControlesWidget(
                       Icons.arrow_right, 110, null), // controle direita
                 ],
               ), // fim row
-        _servoSelecionado == 2
+        _servoSelecionado == ServoAtivo.Superior
             ?
             // controle down
-            ControlesWidget(Icons.arrow_drop_down, 110, _servoSupBaixo)
+            ControlesWidget(Icons.arrow_drop_down, 110, () {
+                widget.channel.write('d');
+                widget.channel.write('f');
+                print('Inferior Baixo D & F');
+              })
             : ControlesWidget(Icons.arrow_drop_down, 110, null),
 
         _isLive == false
@@ -213,7 +248,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               padding: const EdgeInsets.all(8.0),
               child: ButtonServoWidget(() {
                 setState(() {
-                  _servoSelecionado = 1;
+                  _servoSelecionado = ServoAtivo.Inferior;
                 });
               }, 'Inferior'),
             ),
@@ -221,7 +256,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               padding: const EdgeInsets.all(8.0),
               child: ButtonServoWidget(() {
                 setState(() {
-                  _servoSelecionado = 2;
+                  _servoSelecionado = ServoAtivo.Superior;
                 });
               }, 'Superior'),
             ),
