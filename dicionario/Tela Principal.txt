@@ -1,6 +1,11 @@
-Coluna
-    - 3 botões
+Coluna modo live falso
+    - 2 botões
+    - botões controle
+    - FAB para gravar
+
+Coluna modo live true
+    - 2 botões
     - botões controle
     - lista de comandos
     - slider de velocidade
-    - FAB para gravar
+    - FAB para parar gravação

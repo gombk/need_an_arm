@@ -1,7 +1,9 @@
-class Comandos {
-  final Map<String, int> comandos;
+import 'package:flutter/foundation.dart';
 
-  Comandos(this.comandos);
+class Comandos {
+  // final Map<String, int> comandos;
+
+  // Comandos(this.comandos);
 
   void servoAtivo() {}
 }

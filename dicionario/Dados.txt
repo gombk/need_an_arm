@@ -6,3 +6,4 @@ Classe tem que receber:
         - String: D > Servo Medio Baixo; Int: Remove grau
         - String: E > Servo Superior Cima; Int: Adiciona grau
         - String: F > Servo Superior Baixo; Int: Remove grau
+        - String: G > Grab
