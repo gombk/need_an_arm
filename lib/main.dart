@@ -9,7 +9,7 @@ import './screens/splash_screen.dart';
 import './providers/comandos_provider.dart';
 
 void main() async {
-  Socket sock = await Socket.connect('192.168.0.101', 80);
+  Socket sock = await Socket.connect('172.20.10.2', 80);
 
   runApp(MyApp(sock));
 }

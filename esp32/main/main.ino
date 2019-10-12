@@ -8,14 +8,17 @@ int servoPin = 4;
 
 WiFiServer wifiServer(80);
 
-const char* ssid = "PNCFDP-69";
-const char* pass = "34997e4f";
+const char* ssid = "MatheusFPrado";
+const char* pass = "40302010";
 
 void setup() {
   Serial.begin(115200);
   delay(1000);
   WiFi.begin(ssid, pass);
+
   while (WiFi.status() != WL_CONNECTED) {
+      Serial.print("IP:");
+  Serial.println(WiFi.localIP());
     delay(1000);
     Serial.println("Connectando");
   }
