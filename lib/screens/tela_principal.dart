@@ -1,13 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
 import '../widgets/lista_comandos.dart';
 import '../widgets/drawer.dart';
-import './connection_screen.dart';
 import '../models/comandos.dart';
 import '../providers/comandos_provider.dart';
 
@@ -17,11 +15,10 @@ enum ServoAtivo {
   Superior,
 }
 
+// REGEX IP \b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b
+
 class TelaPrincipal extends StatefulWidget {
   static const routeName = '/tela-principal';
-  final loadedIP = Provider.of<ConnectionScreen>(context);
-  
-  Socket channel = loadedIP;
 
   TelaPrincipal({Key key}) : super(key: key);
 
@@ -36,25 +33,28 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   ComandosProvider cmdProvider;
   var _servoSelecionado = ServoAtivo.Nenhum;
   bool _isLive = false;
+  bool _isConnected = false;
+  final _ipController = TextEditingController();
+  Socket s;
 
   @override
   void dispose() {
-    widget.channel.close();
+    s.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Need an arm'),
+        title: _isConnected ? Text('Need an Arm - Conectar ao Socket') : Text('Need an arm - Controlador'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.restore),
             onPressed: () {
               print('Reset');
               setState(() {
+                _isConnected = false;
                 _servoSelecionado = ServoAtivo.Nenhum;
               });
             },
@@ -62,8 +62,8 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         ],
       ),
       drawer: AppDrawer(),
-      body: _servoSelecionado == ServoAtivo.Nenhum
-          ? mainScreenNull()
+      body: _servoSelecionado == ServoAtivo.Nenhum && _isConnected == false
+          ? connectionScreen()
           : mainScreenFunc(),
       // FAB que irá realizar a função de gravar
       // TO DO: se estiver gravando o FAB irá mudar para parar a gravação
@@ -78,7 +78,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               },
             )
           : FloatingActionButton(
-              child: Icon(Icons.add_box),
+              child: Icon(Icons.play_circle_outline),
               // o método onPressed irá abrir um diálogo perguntar se quer começar a gravação
               onPressed: () {
                 if (_servoSelecionado == ServoAtivo.Nenhum) {
@@ -159,8 +159,8 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         ),
         _servoSelecionado == ServoAtivo.Superior
             ? ControlesWidget(Icons.arrow_drop_up, 110, () {
-                widget.channel.write('c');
-                widget.channel.write('e');
+                s.write('c');
+                s.write('e');
                 print('Superior Alto C & E');
               })
             : ControlesWidget(Icons.arrow_drop_up, 110, null), // controle cima
@@ -170,15 +170,15 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ControlesWidget(Icons.arrow_left, 110, () {
-                    widget.channel.write('b');
+                    s.write('b');
                     print('Inferior B');
                   }), // controle esquerda
                   ControlesWidget(Icons.radio_button_unchecked, 100, () {
-                    widget.channel.write('g');
+                    s.write('g');
                     print('Garra/Grab');
                   }), // controle grab
                   ControlesWidget(Icons.arrow_right, 110, () {
-                    widget.channel.write('a');
+                    s.write('a');
                     print('Inferior A');
                   }) // controle direita
                 ],
@@ -192,7 +192,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                     Icons.radio_button_unchecked,
                     100,
                     () {
-                      widget.channel.write('G');
+                      s.write('G');
                       print('Garra/Grab');
                     },
                   ), // controle grab
@@ -204,8 +204,8 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             ?
             // controle down
             ControlesWidget(Icons.arrow_drop_down, 110, () {
-                widget.channel.write('d');
-                widget.channel.write('f');
+                s.write('d');
+                s.write('f');
                 print('Inferior Baixo D & F');
               })
             : ControlesWidget(Icons.arrow_drop_down, 110, null),
@@ -283,5 +283,74 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         // slider de velocidade
       ],
     );
+  }
+
+  Widget connectionScreen() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          TextFormField(
+            autocorrect: false,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: 'Insira o IP'),
+            keyboardType: TextInputType.text,
+            controller: _ipController,
+            onFieldSubmitted: (_) {},
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Por favor, insira um IP';
+              }
+              return null;
+            },
+          ),
+          Flexible(
+            flex: 2,
+            child: RaisedButton(
+              color: Colors.blue,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50)),
+              child: Text(
+                'Conectar',
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: _submitIP,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submitIP() {
+    if (_ipController.text.isEmpty) {
+      print('$_ipController está vazio');
+      return;
+    }
+
+    final enteredIP = _ipController.text;
+
+    if (enteredIP.isEmpty) {
+      print('$enteredIP está vazio');
+      return;
+    }
+
+    _tryConnect(enteredIP);
+  }
+
+  void _tryConnect(String host) async {
+    try {
+      print('Tentando conectar em $host...');
+      s = await Socket.connect(host, 80);
+      print('Conectado com sucesso em $host');
+      setState(() {
+       _isConnected = true; 
+      });
+    } catch (e) {
+      print('Falha ao conectar-se em $host\n$e');
+    }
   }
 }
