@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
 import '../widgets/lista_comandos.dart';
 import '../widgets/drawer.dart';
+import './connection_screen.dart';
 import '../models/comandos.dart';
 import '../providers/comandos_provider.dart';
 
@@ -17,9 +19,11 @@ enum ServoAtivo {
 
 class TelaPrincipal extends StatefulWidget {
   static const routeName = '/tela-principal';
-  final Socket channel;
+  final loadedIP = Provider.of<ConnectionScreen>(context);
+  
+  Socket channel = loadedIP;
 
-  TelaPrincipal({Key key, this.channel}) : super(key: key);
+  TelaPrincipal({Key key}) : super(key: key);
 
   @override
   _TelaPrincipalState createState() => _TelaPrincipalState();
@@ -41,6 +45,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Need an arm'),
