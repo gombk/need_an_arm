@@ -9,7 +9,6 @@ import './screens/splash_screen.dart';
 import './screens/help_screen.dart';
 import './screens/options_screen.dart';
 import './screens/profile_screen.dart';
-import './screens/connection_screen.dart';
 
 import './providers/comandos_provider.dart';
 
@@ -36,10 +35,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (ctx) => SplashScreen(),
-          TelaPrincipal.routeName: (ctx) => TelaPrincipal(
-                channel: null,
-              ),
-          ConnectionScreen.routeName: (ctx) => ConnectionScreen(),
+          TelaPrincipal.routeName: (ctx) => TelaPrincipal(),
           ProfileScreen.routeName: (ctx) => ProfileScreen(),
           OptionsScreen.routeName: (ctx) => OptionsScreen(),
           HelpScreen.routeName: (ctx) => HelpScreen(),

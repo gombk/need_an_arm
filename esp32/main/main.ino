@@ -78,7 +78,14 @@ void loop() {
         //char cmd = Serial.read();
 
         float sinVal;
-         int   toneVal;
+        int   toneVal;
+
+        if(cmd == 'g') {
+          pos = 180;
+          myservo.write(pos);
+          pos = 0;
+          myservo.write(pos);
+        }
   
         if(cmd == 'a') {
 
@@ -95,8 +102,14 @@ void loop() {
         // }
           
           //Serial.print(tone(2, 1000, 500));
-          pos += 20;
-          myservo.write(pos);
+          
+          if (pos < 180) {
+            pos += 20;
+            myservo.write(pos);
+          } else {
+            Serial.println("limite 180");
+          }
+          
           Serial.print("cmd: ");
           Serial.println(cmd);
           Serial.print("pos: ");
@@ -116,8 +129,14 @@ void loop() {
             delay(4);
         }*/
           //Serial.print(tone(2, 500, 500));
-          pos -= 20;
-          myservo.write(pos);
+          if (pos > 0) {
+            pos -= 20;
+            myservo.write(pos);  
+          } else {
+            Serial.println("limite 0");
+          }
+          
+          
           Serial.print("cmd: ");  
           Serial.println(cmd);
           Serial.print("pos: ");

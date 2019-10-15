@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flare_flutter/flare_actor.dart';
 
 import './tela_principal.dart';
-import './connection_screen.dart';
 
 // https://www.2dimensions.com/a/rickseifarth/files/flare/robot-arm/preview
 
@@ -53,21 +52,6 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               onPressed: () => Navigator.of(context)
                   .pushReplacementNamed(TelaPrincipal.routeName),
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: RaisedButton(
-              color: Colors.white,
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
-              child: Text(
-                'Conexão',
-                style: TextStyle(color: Colors.black),
-              ),
-              onPressed: () => Navigator.of(context)
-                  .pushReplacementNamed(ConnectionScreen.routeName),
             ),
           ),
         ],

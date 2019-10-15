@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:need_an_arm/widgets/connection.dart';
 
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
@@ -27,15 +29,12 @@ class TelaPrincipal extends StatefulWidget {
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
-  // define o valor do slider, provavelmente será passado para um arquivo de controle
-  int _valorSlider = 0;
-  Comandos comandos;
-  ComandosProvider cmdProvider;
+  final _ipController = TextEditingController();
   var _servoSelecionado = ServoAtivo.Nenhum;
+  int _valorSlider = 0;
+  Socket s;
   bool _isLive = false;
   bool _isConnected = false;
-  final _ipController = TextEditingController();
-  Socket s;
 
   @override
   void dispose() {
@@ -47,7 +46,9 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isConnected ? Text('Need an Arm - Conectar ao Socket') : Text('Need an arm - Controlador'),
+        title: _isConnected == false
+            ? Text('Conectar ao Socket')
+            : Text('Need an arm - Controlador'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.restore),
@@ -63,7 +64,10 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       ),
       drawer: AppDrawer(),
       body: _servoSelecionado == ServoAtivo.Nenhum && _isConnected == false
-          ? connectionScreen()
+          ? ConnectionWidget(
+              ipController: _ipController,
+              submitIp: _submitIP,
+            )
           : mainScreenFunc(),
       // FAB que irá realizar a função de gravar
       // TO DO: se estiver gravando o FAB irá mudar para parar a gravação
@@ -192,7 +196,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                     Icons.radio_button_unchecked,
                     100,
                     () {
-                      s.write('G');
+                      s.write('g');
                       print('Garra/Grab');
                     },
                   ), // controle grab
@@ -239,95 +243,17 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     );
   }
 
-  Widget mainScreenNull() {
-    return Column(
-      // coluna principal, armazena todos os widgets
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        // botões de controle do servo
-        Row(
-          // centralizado
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonServoWidget(() {
-                setState(() {
-                  _servoSelecionado = ServoAtivo.Inferior;
-                });
-              }, 'Inferior'),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonServoWidget(() {
-                setState(() {
-                  _servoSelecionado = ServoAtivo.Superior;
-                });
-              }, 'Superior'),
-            ),
-          ],
-        ),
-        ControlesWidget(Icons.arrow_drop_up, 110, null), // controle cima
-        // row para criar os botões esquerda, grab e direita
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ControlesWidget(Icons.arrow_left, 110, null), // controle esquerda
-            ControlesWidget(
-                Icons.radio_button_unchecked, 100, null), // controle grab
-            ControlesWidget(Icons.arrow_right, 110, null), // controle direita
-          ],
-        ), // fim row
-        // controle down
-        ControlesWidget(Icons.arrow_drop_down, 110, null),
-        // slider de velocidade
-      ],
-    );
-  }
-
-  Widget connectionScreen() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          TextFormField(
-            autocorrect: false,
-            autofocus: true,
-            decoration: const InputDecoration(labelText: 'Insira o IP'),
-            keyboardType: TextInputType.text,
-            controller: _ipController,
-            onFieldSubmitted: (_) {},
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Por favor, insira um IP';
-              }
-              return null;
-            },
-          ),
-          Flexible(
-            flex: 2,
-            child: RaisedButton(
-              color: Colors.blue,
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
-              child: Text(
-                'Conectar',
-                style: TextStyle(color: Colors.black),
-              ),
-              onPressed: _submitIP,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _submitIP() {
+    var ipPattern = r"(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)";
+    RegExp regExp = new RegExp(ipPattern);
+
     if (_ipController.text.isEmpty) {
-      print('$_ipController está vazio');
+      Fluttertoast.showToast(
+        msg: 'O IP não pode ser vazio',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        fontSize: 16.0,
+      );
       return;
     }
 
@@ -336,6 +262,8 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     if (enteredIP.isEmpty) {
       print('$enteredIP está vazio');
       return;
+    } else if (regExp.hasMatch(enteredIP)) {
+      print('No match');
     }
 
     _tryConnect(enteredIP);
@@ -347,8 +275,9 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       s = await Socket.connect(host, 80);
       print('Conectado com sucesso em $host');
       setState(() {
-       _isConnected = true; 
+        _isConnected = true;
       });
+      print('$s');
     } catch (e) {
       print('Falha ao conectar-se em $host\n$e');
     }
