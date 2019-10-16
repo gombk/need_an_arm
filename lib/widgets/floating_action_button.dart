@@ -16,7 +16,7 @@ class FabGravar extends StatelessWidget {
               content: Text('Você deseja começar a gravar os seus comandos?'),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('Não'),
+                  child: Text('Não gravar'),
                   onPressed: () {
                     print('Não gravar');
                     Navigator.of(ctx).pop();

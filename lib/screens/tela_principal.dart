@@ -133,7 +133,7 @@ class TelaPrincipalState extends State<TelaPrincipal> {
                     Icons.radio_button_unchecked,
                     100,
                     () {
-                      s.write('g');
+                      s.write('0:0:0:0:Open');
                       print('Garra/Grab');
                     },
                   ), // controle grab

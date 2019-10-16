@@ -35,7 +35,9 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (ctx) => SplashScreen(),
           TelaPrincipal.routeName: (ctx) => TelaPrincipal(),
-          RecordingScreen.routeName: (ctx) => RecordingScreen(),
+          RecordingScreen.routeName: (ctx) => RecordingScreen(
+                channel: null,
+              ),
           ProfileScreen.routeName: (ctx) => ProfileScreen(),
           OptionsScreen.routeName: (ctx) => OptionsScreen(),
           HelpScreen.routeName: (ctx) => HelpScreen(),

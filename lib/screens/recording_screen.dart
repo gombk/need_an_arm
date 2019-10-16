@@ -17,6 +17,9 @@ enum ServoAtivo {
 
 class RecordingScreen extends StatefulWidget {
   static const routeName = '/recording-screen';
+  final Socket channel;
+
+  RecordingScreen({@required this.channel});
 
   @override
   _RecordingScreenState createState() => _RecordingScreenState();
@@ -25,12 +28,9 @@ class RecordingScreen extends StatefulWidget {
 class _RecordingScreenState extends State<RecordingScreen> {
   var _servoSelecionado = ServoAtivo.Nenhum;
   int _valorSlider = 0;
-  Socket s;
 
   @override
   Widget build(BuildContext context) {
-    final ipAddress = Provider.of<TelaPrincipalState>(context);
-    s = ipAddress.ipNotifier;
     return Scaffold(
       appBar: AppBar(
         title: Text('Need an Arm - Gravando'),
