@@ -1,5 +1,11 @@
 import 'package:flutter/foundation.dart';
 
-import '../models/comandos.dart';
+class ComandosProvider with ChangeNotifier {
+  List<String> fileToSend;
 
-class ComandosProvider with ChangeNotifier {}
+  void addStringToList(String msg, int total) {
+    for (var i = 0; i < total; i++) {
+      fileToSend.add(msg);
+    }
+  }
+}

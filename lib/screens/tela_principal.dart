@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:need_an_arm/widgets/connection.dart';
 
+import '../widgets/floating_action_button.dart';
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
-import '../widgets/lista_comandos.dart';
 import '../widgets/drawer.dart';
-import '../models/comandos.dart';
-import '../providers/comandos_provider.dart';
 
 enum ServoAtivo {
   Nenhum,
@@ -22,18 +20,15 @@ enum ServoAtivo {
 class TelaPrincipal extends StatefulWidget {
   static const routeName = '/tela-principal';
 
-  TelaPrincipal({Key key}) : super(key: key);
-
   @override
-  _TelaPrincipalState createState() => _TelaPrincipalState();
+  TelaPrincipalState createState() => TelaPrincipalState();
 }
 
-class _TelaPrincipalState extends State<TelaPrincipal> {
+class TelaPrincipalState extends State<TelaPrincipal> {
   final _ipController = TextEditingController();
   var _servoSelecionado = ServoAtivo.Nenhum;
   int _valorSlider = 0;
   Socket s;
-  bool _isLive = false;
   bool _isConnected = false;
 
   @override
@@ -71,65 +66,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           : mainScreenFunc(),
       // FAB que irá realizar a função de gravar
       // TO DO: se estiver gravando o FAB irá mudar para parar a gravação
-      floatingActionButton: _isLive
-          ? FloatingActionButton(
-              child: Icon(Icons.stop),
-              onPressed: () {
-                print('Stop recording');
-                setState(() {
-                  _isLive = false;
-                });
-              },
-            )
-          : FloatingActionButton(
-              child: Icon(Icons.play_circle_outline),
-              // o método onPressed irá abrir um diálogo perguntar se quer começar a gravação
-              onPressed: () {
-                if (_servoSelecionado == ServoAtivo.Nenhum) {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text('Nenhum servo selecionado'),
-                      content: Text(
-                          'Por favor, selecione o servo superior ou inferior acima'),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text('Ok'),
-                          onPressed: () => Navigator.of(ctx).pop(),
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text('Gravar comandos'),
-                      content: Text(
-                          'Você deseja começar a gravar os seus comandos?'),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text('Não'),
-                          onPressed: () {
-                            print('Não');
-                            Navigator.of(ctx).pop();
-                          },
-                        ),
-                        FlatButton(
-                          child: Text('Sim'),
-                          onPressed: () {
-                            print('Sim');
-                            setState(() {
-                              _isLive = true;
-                            });
-                            Navigator.of(ctx).pop();
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              }),
+      floatingActionButton: _isConnected ? FabGravar() : null,
     );
   }
 
@@ -214,37 +151,26 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               })
             : ControlesWidget(Icons.arrow_drop_down, 110, null),
 
-        _isLive == false
-            ? Text('')
-            :
-            // slider de velocidade
-            Slider(
-                value: _valorSlider.toDouble(),
-                min: 0.0,
-                max: 10000.0,
-                divisions: 100,
-                label: '$_valorSlider',
-                onChanged: (double newValue) {
-                  setState(() {
-                    _valorSlider = newValue.round();
-                  });
-                },
-              ),
-        _isLive == false
-            ? Text('')
-            : Container(
-                height: 150,
-                width: 300,
-                child: Card(
-                  child: ListaComandos(),
-                ),
-              ),
+        // slider de velocidade
+        Text('Selecione a precisão'),
+        Slider(
+          value: _valorSlider.toDouble(),
+          min: 0.0,
+          max: 10000.0,
+          divisions: 100,
+          label: '$_valorSlider',
+          onChanged: (double newValue) {
+            setState(() {
+              _valorSlider = newValue.round();
+            });
+          },
+        ),
       ],
     );
   }
 
   void _submitIP() {
-    var ipPattern = r"(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)";
+    var ipPattern = r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
     RegExp regExp = new RegExp(ipPattern);
 
     if (_ipController.text.isEmpty) {
@@ -269,6 +195,10 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     _tryConnect(enteredIP);
   }
 
+  Socket get ipNotifier {
+    return s;
+  }
+
   void _tryConnect(String host) async {
     try {
       print('Tentando conectar em $host...');
@@ -277,7 +207,6 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       setState(() {
         _isConnected = true;
       });
-      print('$s');
     } catch (e) {
       print('Falha ao conectar-se em $host\n$e');
     }
