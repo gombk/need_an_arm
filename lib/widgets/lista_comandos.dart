@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/Perfil.dart';
 
 class ListaComandos extends StatefulWidget {
   @override
@@ -6,7 +7,13 @@ class ListaComandos extends StatefulWidget {
 }
 
 class _ListaComandosState extends State<ListaComandos> {
-  Map<String, int> comandos;
+  final List<Perfil> comandos = [
+    Perfil(
+      id: '0',
+      name: 'Perfil 1',
+      commandToSend: {'a': 0},
+    ),
+  ];
   Key key;
 
   Widget texto(Map<String, int> comando) {
@@ -25,9 +32,7 @@ class _ListaComandosState extends State<ListaComandos> {
         return Column(
           children: <Widget>[
             Dismissible(
-              child: texto(
-                {'a': 0}
-              ),
+              child: null,
               background: Container(
                 child: Icon(
                   Icons.delete,
