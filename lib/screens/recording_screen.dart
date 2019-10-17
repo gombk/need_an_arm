@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './tela_principal.dart';
+import '../providers/comandos_provider.dart';
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
 import '../widgets/lista_comandos.dart';
@@ -31,6 +31,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ipProvider = Provider.of<ComandosProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Need an Arm - Gravando'),
@@ -74,6 +75,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
           ),
           _servoSelecionado == ServoAtivo.Superior
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
+                  ipProvider.socket.write('0:0:0:Open');
                   print('Superior Alto C & E');
                 })
               : ControlesWidget(
