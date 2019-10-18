@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Colors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -25,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Text(
               'Need an Arm?',
               style: TextStyle(
+                color: Colors.black,
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
               ),
@@ -42,13 +43,13 @@ class _SplashScreenState extends State<SplashScreen> {
           Flexible(
             flex: 2,
             child: RaisedButton(
-              color: Colors.white,
+              color: Colors.black,
               elevation: 4,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50)),
               child: Text(
                 'Continuar',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () => Navigator.of(context)
                   .pushReplacementNamed(TelaPrincipal.routeName),

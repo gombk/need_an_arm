@@ -6,17 +6,20 @@ import 'package:fluttertoast/fluttertoast.dart';
 class ComandosProvider with ChangeNotifier {
   Socket _socket;
   bool isConnected;
+  bool isReallyReallyConnected;
 
   Socket get socket {
     return _socket;
   }
 
   bool get connected {
-    return isConnected;
+    return isReallyReallyConnected;
   }
 
-  void verifyConnection() {
-    isConnected ? print(isConnected) : print(isConnected);
+  void isReallyConnected() {
+    if (isConnected) {
+      isReallyReallyConnected = true;
+    }
   }
 
   void connect(String host) async {
@@ -36,6 +39,7 @@ class ComandosProvider with ChangeNotifier {
         msg: 'Conectado com sucesso em $host',
         toastLength: Toast.LENGTH_SHORT,
       );
+      isReallyConnected();
 
       notifyListeners();
     } catch (e) {

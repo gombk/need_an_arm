@@ -91,14 +91,12 @@ class TelaPrincipalState extends State<TelaPrincipal> {
 
                 ipProvider.connect(enteredIP);
 
-                if (ipProvider.connected == true) {
+                if (ipProvider.connected) {
                   setState(() {
                    _isConnected = true; 
                   });
                 } else {
-                  setState(() {
-                   _isConnected = true; 
-                  });
+                  return;
                 }
                 
                 print(ipProvider.socket);
@@ -197,6 +195,7 @@ class TelaPrincipalState extends State<TelaPrincipal> {
           // slider de velocidade
           Text('Selecione a precisão'),
           Slider(
+            activeColor: Theme.of(context).accentColor,
             value: _valorSlider.toDouble(),
             min: 0.0,
             max: 10000.0,

@@ -27,8 +27,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Need an Arm',
         theme: ThemeData(
-          primaryColor: Colors.blue,
+          brightness: Brightness.dark,
           primarySwatch: Colors.blue,
+          primaryColor: const Color(0xFF212121),
+          accentColor: const Color(0xFF64ffda),
+          canvasColor: const Color(0xFF303030),
         ),
         debugShowCheckedModeBanner: false,
         initialRoute: '/',

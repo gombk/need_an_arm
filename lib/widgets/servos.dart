@@ -9,7 +9,8 @@ class ButtonServoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      child: Text(nomeServo),
+      color: Theme.of(context).accentColor,
+      child: Text(nomeServo, style: TextStyle(color: Colors.black),),
       onPressed: trocaServo,
     );
   }
