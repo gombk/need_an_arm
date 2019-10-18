@@ -6,13 +6,102 @@ import 'package:fluttertoast/fluttertoast.dart';
 class ComandosProvider with ChangeNotifier {
   Socket _socket;
   bool isConnected;
+  int _angServo = 0;
+  String _servo;
+  bool isOpen = true;
 
   Socket get socket {
     return _socket;
   }
 
+  String get servoComando {
+    return _servo;
+  }
+
+  int get angServo {
+    return _angServo;
+  }
+
   bool get connected {
     return isConnected;
+  }
+
+  void calcAngServo(String servo, String direcao, int precisao) {
+    if (servo == 'S1' && direcao == 'D') {
+      _angServo += precisao;
+
+      if (_angServo >= 180) {
+        _angServo = 180;
+      }
+      _servo = 'A:$_angServo:$precisao';
+      print(_servo);
+    }
+
+    if (servo == 'S1' && direcao == 'E') {
+      _angServo -= precisao;
+
+      if (_angServo <= 0) {
+        _angServo = 0;
+      }
+      _servo = 'A:$_angServo:$precisao';
+      print(_servo);
+    }
+
+    if (servo == 'S2' && direcao == 'UP') {
+      _angServo += precisao;
+
+      if (_angServo >= 180) {
+        _angServo = 180;
+      }
+
+      _servo = 'C:$_angServo:$precisao';
+      print(_servo);
+    }
+
+    if (servo == 'S2' && direcao == 'DOWN') {
+      _angServo -= precisao;
+
+      if (_angServo <= 0) {
+        _angServo = 0;
+      }
+
+      _servo = 'C:$_angServo:$precisao';
+      print(_servo);
+    }
+
+    if (servo == 'S3' && direcao == 'UP') {
+      _angServo += precisao;
+
+      if (_angServo >= 180) {
+        _angServo = 180;
+      }
+
+      _servo = 'D:$_angServo:$precisao';
+      print(_servo);
+    }
+
+    if (servo == 'S3' && direcao == 'DOWN') {
+      _angServo -= precisao;
+
+      if (_angServo <= 0) {
+        _angServo = 180;
+      }
+
+      _servo = 'D:$_angServo:$precisao';
+      print(_servo);
+    }
+  }
+
+  void garra() {
+    if (isOpen) {
+      _servo = 'G:180:0';
+      print("$_servo\n$isOpen");
+      isOpen = false;
+    } else if (isOpen == false) {
+      _servo = 'G:0:0';
+      print("$_servo\n$isOpen");
+      isOpen = true;
+    }
   }
 
   void connect(String host) async {

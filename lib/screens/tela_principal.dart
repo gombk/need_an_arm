@@ -30,10 +30,7 @@ class TelaPrincipalState extends State<TelaPrincipal> {
   final _ipController = TextEditingController();
   var _servoSelecionado = ServoAtivo.Nenhum;
   int _valorSlider = 0;
-  int _servo1Ang = 0;
-  int _servo2Ang = 0;
-  String _servo1;
-  String _servo2;
+  
   Socket s;
   bool _isConnected = false;
 
@@ -95,13 +92,19 @@ class TelaPrincipalState extends State<TelaPrincipal> {
 
                 ipProvider.connect(enteredIP);
 
-                if (ipProvider.connected) {
-                  setState(() {
-                    _isConnected = true;
-                  });
-                } else {
-                  return;
-                }
+                setState(() {
+                  _isConnected = !_isConnected;
+                });
+
+                // if (ipProvider.connected) {
+                //   setState(() {
+                //     _isConnected = true;
+                //   });
+                // } else {
+                //   setState(() {
+                //    _isConnected = true; 
+                //   });
+                // }
 
                 print(ipProvider.socket);
               },
@@ -114,6 +117,7 @@ class TelaPrincipalState extends State<TelaPrincipal> {
   }
 
   Widget mainScreenFunc(Socket ip) {
+    var cServo = ComandosProvider();
     return SingleChildScrollView(
       child: Column(
         // coluna principal, armazena todos os widgets
@@ -144,9 +148,10 @@ class TelaPrincipalState extends State<TelaPrincipal> {
           ),
           _servoSelecionado == ServoAtivo.Superior
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
-                  _addServo2();
-                  ip.write(_servo2);
-                  print('Superior Alto C & E\n$_servo2');
+                  cServo.calcAngServo('S2', 'UP', _valorSlider);
+                  print(cServo.angServo);
+                  // ip.write(cServo.servoComando);
+                  print('Superior Alto C & E');
                 })
               : ControlesWidget(
                   Icons.arrow_drop_up, 110, null), // controle cima
@@ -156,18 +161,21 @@ class TelaPrincipalState extends State<TelaPrincipal> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ControlesWidget(Icons.arrow_left, 110, () {
-                      _subServo1();
-                      ip.write(_servo1);
-                      print('Inferior B\n$_servo1');
+                      cServo.calcAngServo('S1', 'E', _valorSlider);
+                      print(cServo.angServo);
+                      //ip.write(cServo.servoComando);
+                      print('Inferior A\n');
                     }), // controle esquerda
                     ControlesWidget(Icons.radio_button_unchecked, 100, () {
-                      ip.write('g');
+                      cServo.garra();
+                      // ip.write(cServo.servoComando);
                       print('Garra/Grab');
                     }), // controle grab
                     ControlesWidget(Icons.arrow_right, 110, () {
-                      _addServo1();
-                      ip.write(_servo1);
-                      print('Inferior A\n$_servo1');
+                      cServo.calcAngServo('S1', 'D', _valorSlider);
+                      print(cServo.angServo);
+                      //ip.write(cServo.servoComando);
+                      print('Inferior A\n');
                     }) // controle direita
                   ],
                 )
@@ -180,7 +188,8 @@ class TelaPrincipalState extends State<TelaPrincipal> {
                       Icons.radio_button_unchecked,
                       100,
                       () {
-                        ip.write('B:0:0');
+                        cServo.garra();
+                        // ip.write(cServo.servoComando);
                         print('Garra/Grab');
                       },
                     ), // controle grab
@@ -192,9 +201,9 @@ class TelaPrincipalState extends State<TelaPrincipal> {
               ?
               // controle down
               ControlesWidget(Icons.arrow_drop_down, 110, () {
-                  _subServo2();
-                  ip.write(_servo2);
-                  print('Inferior Baixo D & F\n$_servo2');
+                  cServo.calcAngServo('S2', 'DOWN', _valorSlider);
+                  // ip.write(cServo.servoComando);
+                  print('Inferior Baixo D & F');
                 })
               : ControlesWidget(Icons.arrow_drop_down, 110, null),
 
@@ -216,43 +225,5 @@ class TelaPrincipalState extends State<TelaPrincipal> {
         ],
       ),
     );
-  }
-
-  void _addServo1() {
-    _servo1Ang += _valorSlider;
-
-    if (_servo1Ang >= 180) {
-      _servo1Ang = 180;
-    }
-
-    _servo1 = 'A:$_servo1Ang:0';
-  }
-
-  void _subServo1() {
-    _servo1Ang -= _valorSlider;
-
-    if (_servo1Ang <= 0) {
-      _servo1Ang = 0;
-    }
-    _servo1 = 'A:$_servo1Ang:0';
-  }
-
-    void _addServo2() {
-    _servo2Ang += _valorSlider;
-
-    if (_servo2Ang >= 180) {
-      _servo2Ang = 180;
-    }
-
-    _servo2 = 'B:$_servo1Ang:0';
-  }
-
-  void _subServo2() {
-    _servo2Ang -= _valorSlider;
-
-    if (_servo1Ang <= 0) {
-      _servo2Ang = 0;
-    }
-    _servo2 = 'B:$_servo1Ang:0';
   }
 }
