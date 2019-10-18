@@ -30,6 +30,10 @@ class TelaPrincipalState extends State<TelaPrincipal> {
   final _ipController = TextEditingController();
   var _servoSelecionado = ServoAtivo.Nenhum;
   int _valorSlider = 0;
+  int _servo1Ang = 0;
+  int _servo2Ang = 0;
+  String _servo1;
+  String _servo2;
   Socket s;
   bool _isConnected = false;
 
@@ -93,12 +97,12 @@ class TelaPrincipalState extends State<TelaPrincipal> {
 
                 if (ipProvider.connected) {
                   setState(() {
-                   _isConnected = true; 
+                    _isConnected = true;
                   });
                 } else {
                   return;
                 }
-                
+
                 print(ipProvider.socket);
               },
             )
@@ -140,9 +144,9 @@ class TelaPrincipalState extends State<TelaPrincipal> {
           ),
           _servoSelecionado == ServoAtivo.Superior
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
-                  ip.write('c');
-                  ip.write('e');
-                  print('Superior Alto C & E');
+                  _addServo2();
+                  ip.write(_servo2);
+                  print('Superior Alto C & E\n$_servo2');
                 })
               : ControlesWidget(
                   Icons.arrow_drop_up, 110, null), // controle cima
@@ -152,16 +156,18 @@ class TelaPrincipalState extends State<TelaPrincipal> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ControlesWidget(Icons.arrow_left, 110, () {
-                      ip.write('b');
-                      print('Inferior B');
+                      _subServo1();
+                      ip.write(_servo1);
+                      print('Inferior B\n$_servo1');
                     }), // controle esquerda
                     ControlesWidget(Icons.radio_button_unchecked, 100, () {
                       ip.write('g');
                       print('Garra/Grab');
                     }), // controle grab
                     ControlesWidget(Icons.arrow_right, 110, () {
-                      ip.write('a');
-                      print('Inferior A');
+                      _addServo1();
+                      ip.write(_servo1);
+                      print('Inferior A\n$_servo1');
                     }) // controle direita
                   ],
                 )
@@ -174,7 +180,7 @@ class TelaPrincipalState extends State<TelaPrincipal> {
                       Icons.radio_button_unchecked,
                       100,
                       () {
-                        ip.write('0:0:0:0:Open');
+                        ip.write('B:0:0');
                         print('Garra/Grab');
                       },
                     ), // controle grab
@@ -186,9 +192,9 @@ class TelaPrincipalState extends State<TelaPrincipal> {
               ?
               // controle down
               ControlesWidget(Icons.arrow_drop_down, 110, () {
-                  ip.write('d');
-                  ip.write('f');
-                  print('Inferior Baixo D & F');
+                  _subServo2();
+                  ip.write(_servo2);
+                  print('Inferior Baixo D & F\n$_servo2');
                 })
               : ControlesWidget(Icons.arrow_drop_down, 110, null),
 
@@ -198,8 +204,8 @@ class TelaPrincipalState extends State<TelaPrincipal> {
             activeColor: Theme.of(context).accentColor,
             value: _valorSlider.toDouble(),
             min: 0.0,
-            max: 10000.0,
-            divisions: 100,
+            max: 90.0,
+            divisions: 90,
             label: '$_valorSlider',
             onChanged: (double newValue) {
               setState(() {
@@ -212,42 +218,41 @@ class TelaPrincipalState extends State<TelaPrincipal> {
     );
   }
 
-  void _submitIP() {
-    var ipPattern = r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
-    RegExp regExp = new RegExp(ipPattern);
+  void _addServo1() {
+    _servo1Ang += _valorSlider;
 
-    if (_ipController.text.isEmpty) {
-      Fluttertoast.showToast(
-        msg: 'O IP não pode ser vazio',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        fontSize: 16.0,
-      );
-      return;
+    if (_servo1Ang >= 180) {
+      _servo1Ang = 180;
     }
 
-    final enteredIP = _ipController.text;
-
-    if (enteredIP.isEmpty) {
-      print('$enteredIP está vazio');
-      return;
-    } else if (regExp.hasMatch(enteredIP)) {
-      print('No match');
-    }
-
-    _tryConnect(enteredIP);
+    _servo1 = 'A:$_servo1Ang:0';
   }
 
-  void _tryConnect(String host) async {
-    try {
-      print('Tentando conectar em $host...');
-      s = await Socket.connect(host, 80);
-      print('Conectado com sucesso em $host');
-      setState(() {
-        _isConnected = true;
-      });
-    } catch (e) {
-      print('Falha ao conectar-se em $host\n$e');
+  void _subServo1() {
+    _servo1Ang -= _valorSlider;
+
+    if (_servo1Ang <= 0) {
+      _servo1Ang = 0;
     }
+    _servo1 = 'A:$_servo1Ang:0';
+  }
+
+    void _addServo2() {
+    _servo2Ang += _valorSlider;
+
+    if (_servo2Ang >= 180) {
+      _servo2Ang = 180;
+    }
+
+    _servo2 = 'B:$_servo1Ang:0';
+  }
+
+  void _subServo2() {
+    _servo2Ang -= _valorSlider;
+
+    if (_servo1Ang <= 0) {
+      _servo2Ang = 0;
+    }
+    _servo2 = 'B:$_servo1Ang:0';
   }
 }
