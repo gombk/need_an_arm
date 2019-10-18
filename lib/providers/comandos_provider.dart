@@ -9,6 +9,11 @@ class ComandosProvider with ChangeNotifier {
   int _angServo = 0;
   String _servo;
   bool isOpen = true;
+  List<String> comandos = [];
+
+  List<String> get cmd {
+    return comandos;
+  }
 
   Socket get socket {
     return _socket;
@@ -24,6 +29,18 @@ class ComandosProvider with ChangeNotifier {
 
   bool get connected {
     return isConnected;
+  }
+
+  void addComando(String value) {
+    comandos.add(value);
+
+    notifyListeners();
+  }
+
+  void resetComando() {
+    comandos.removeLast();
+
+    notifyListeners();
   }
 
   void calcAngServo(String servo, String direcao, int precisao) {

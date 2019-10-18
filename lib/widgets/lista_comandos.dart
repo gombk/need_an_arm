@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/Perfil.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/comandos_provider.dart';
 
 class ListaComandos extends StatefulWidget {
   @override
@@ -7,32 +9,17 @@ class ListaComandos extends StatefulWidget {
 }
 
 class _ListaComandosState extends State<ListaComandos> {
-  final List<Perfil> comandos = [
-    Perfil(
-      id: '0',
-      name: 'Perfil 1',
-      commandToSend: {'a': 0},
-    ),
-  ];
   Key key;
-
-  Widget texto(Map<String, int> comando) {
-    return Text(
-      '$comando',
-      style: TextStyle(
-        fontSize: 20,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+    final cmdProvider = Provider.of<ComandosProvider>(context);
     return ListView.builder(
       itemBuilder: (ctx, i) {
         return Column(
           children: <Widget>[
             Dismissible(
-              child: null,
+              child: Text('${cmdProvider.comandos}'),
               background: Container(
                 child: Icon(
                   Icons.delete,
@@ -69,7 +56,7 @@ class _ListaComandosState extends State<ListaComandos> {
           ],
         );
       },
-      itemCount: 1,
+      itemCount: cmdProvider.cmd.length,
     );
   }
 }
