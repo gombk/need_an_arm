@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class ConnectionWidget extends StatelessWidget {
+import '../providers/comandos_provider.dart';
+
+class ConnectionWidget extends StatefulWidget {
   final TextEditingController ipController;
+  final TextEditingController portController;
   final Function submitIp;
 
-  ConnectionWidget({this.ipController, this.submitIp});
+  ConnectionWidget({this.ipController, this.submitIp, this.portController});
 
+  @override
+  _ConnectionWidgetState createState() => _ConnectionWidgetState();
+}
+
+class _ConnectionWidgetState extends State<ConnectionWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -19,7 +28,7 @@ class ConnectionWidget extends StatelessWidget {
             autofocus: true,
             decoration: const InputDecoration(labelText: 'Insira o IP'),
             keyboardType: TextInputType.text,
-            controller: ipController,
+            controller: widget.ipController,
             onFieldSubmitted: (_) {},
             validator: (value) {
               if (value.isEmpty) {
@@ -39,7 +48,7 @@ class ConnectionWidget extends StatelessWidget {
                 'Conectar',
                 style: TextStyle(color: Colors.black),
               ),
-              onPressed: submitIp,
+              onPressed: widget.submitIp,
             ),
           ),
         ],

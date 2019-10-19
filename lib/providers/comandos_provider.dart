@@ -8,6 +8,7 @@ class ComandosProvider with ChangeNotifier {
   bool isConnected;
   int _angServo = 0;
   String _servo;
+  bool _isRecording = false;
   bool isOpen = true;
   List<String> comandos = [];
 
@@ -31,14 +32,25 @@ class ComandosProvider with ChangeNotifier {
     return isConnected;
   }
 
+  /* função de teste por que eu simplesmente posso adicionar o valor em uma das funções abaixo :)
+  mas quando eu fiz isso achei que era assim que tinha que fazer, mas pensando bem é apenas desperdício
+  de recurso xD
+  */
   void addComando(String value) {
     comandos.add(value);
 
     notifyListeners();
   }
+  // fim da função de teste
+
+  void changeMode() {
+    _isRecording = !_isRecording;
+
+    notifyListeners();
+  }
 
   void resetComando() {
-    comandos.removeLast();
+    comandos.removeWhere((comandos) => comandos.length > 0);
 
     notifyListeners();
   }
@@ -50,7 +62,13 @@ class ComandosProvider with ChangeNotifier {
       if (_angServo >= 180) {
         _angServo = 180;
       }
-      _servo = 'A:$_angServo:$precisao';
+
+      if (_isRecording) {
+        comandos.add('W:A:$_angServo:$precisao');
+      } else {
+        _servo = 'A:$_angServo:$precisao';
+      }
+
       print(_servo);
     }
 
@@ -69,6 +87,12 @@ class ComandosProvider with ChangeNotifier {
 
       if (_angServo >= 180) {
         _angServo = 180;
+      }
+
+      if (_isRecording) {
+        comandos.add('W:C:$_angServo:$precisao');
+      } else {
+        _servo = 'C:$_angServo:$precisao';
       }
 
       _servo = 'C:$_angServo:$precisao';

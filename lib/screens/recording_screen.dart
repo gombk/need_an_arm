@@ -78,7 +78,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
           ),
           _servoSelecionado == ServoAtivo.Superior
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
-                  cmdProvider.addComando('A:0:0:0');
+                  cmdProvider.calcAngServo('S2', 'UP', _valorSlider);
                   // ipProvider.socket.write('0:0:0:Open');
                   print('Superior Alto C & E');
                 })
@@ -127,10 +127,11 @@ class _RecordingScreenState extends State<RecordingScreen> {
           // slider de velocidade
           Text('Selecione a precisão'),
           Slider(
+            activeColor: Theme.of(context).accentColor,
             value: _valorSlider.toDouble(),
             min: 0.0,
-            max: 10000.0,
-            divisions: 100,
+            max: 180.0,
+            divisions: 180,
             label: '$_valorSlider',
             onChanged: (double newValue) {
               setState(() {

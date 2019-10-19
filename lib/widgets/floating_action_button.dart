@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/recording_screen.dart';
+import '../providers/comandos_provider.dart';
 
 class FabGravar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final changeMode = Provider.of<ComandosProvider>(context);
+
     return FloatingActionButton(
         child: Icon(Icons.play_circle_outline),
         // o método onPressed irá abrir um diálogo perguntar se quer começar a gravação
@@ -26,6 +30,7 @@ class FabGravar extends StatelessWidget {
                   child: Text('Sim'),
                   onPressed: () {
                     print('Gravando');
+                    changeMode.changeMode();
                     Navigator.of(ctx).pop();
                     Navigator.of(context).pushNamed(RecordingScreen.routeName);
                   },
