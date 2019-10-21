@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/comandos.dart';
 import '../providers/comandos_provider.dart';
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
@@ -13,6 +10,7 @@ import '../widgets/drawer.dart';
 enum ServoAtivo {
   Nenhum,
   Inferior,
+  Medio,
   Superior,
 }
 
@@ -64,6 +62,18 @@ class _RecordingScreenState extends State<RecordingScreen> {
                     });
                   }, 'Inferior'),
                 ),
+                //
+                //
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ButtonServoWidget(() {
+                    setState(() {
+                      _servoSelecionado = ServoAtivo.Medio;
+                    });
+                  }, 'Medio'),
+                ),
+                //
+                //
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ButtonServoWidget(() {
@@ -74,12 +84,20 @@ class _RecordingScreenState extends State<RecordingScreen> {
                 ),
               ],
             ),
-            _servoSelecionado == ServoAtivo.Superior
+            _servoSelecionado == ServoAtivo.Superior ||
+                    _servoSelecionado == ServoAtivo.Medio
                 ? ControlesWidget(Icons.arrow_drop_up, 110, () {
-                    setState(() {
-                      cmdProvider.calcAngServo('S2', 'UP', _valorSlider);
-                    });
-                    // ipProvider.socket.write('0:0:0:Open');
+                    if (_servoSelecionado == ServoAtivo.Medio) {
+                      setState(() {
+                        cmdProvider.calcAngServo('S3', 'UP', _valorSlider);
+                      });
+                      cmdProvider.socket.write(cmdProvider.servoComando);
+                    } else {
+                      setState(() {
+                        cmdProvider.calcAngServo('S2', 'UP', _valorSlider);
+                      });
+                      cmdProvider.socket.write(cmdProvider.servoComando);
+                    }
                   })
                 : ControlesWidget(
                     Icons.arrow_drop_up, 110, null), // controle cima
@@ -89,13 +107,22 @@ class _RecordingScreenState extends State<RecordingScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       ControlesWidget(Icons.arrow_left, 110, () {
-                        print('Inferior B');
+                        setState(() {
+                          cmdProvider.calcAngServo('S1', 'E', _valorSlider);
+                          cmdProvider.socket.write(cmdProvider.servoComando);
+                        });
                       }), // controle esquerda
                       ControlesWidget(Icons.radio_button_unchecked, 100, () {
-                        print('Garra/Grab');
+                        setState(() {
+                          cmdProvider.garra();
+                          cmdProvider.socket.write(cmdProvider.servoComando);
+                        });
                       }), // controle grab
                       ControlesWidget(Icons.arrow_right, 110, () {
-                        print('Inferior A');
+                        setState(() {
+                          cmdProvider.calcAngServo('S1', 'D', _valorSlider);
+                          cmdProvider.socket.write(cmdProvider.servoComando);
+                        });
                       }) // controle direita
                     ],
                   )
@@ -104,24 +131,32 @@ class _RecordingScreenState extends State<RecordingScreen> {
                     children: <Widget>[
                       ControlesWidget(
                           Icons.arrow_left, 110, null), // controle esquerda
-                      ControlesWidget(
-                        Icons.radio_button_unchecked,
-                        100,
-                        () {
-                          print('Garra/Grab');
-                        },
-                      ), // controle grab
+                      ControlesWidget(Icons.radio_button_unchecked, 100, () {
+                        setState(() {
+                          cmdProvider.garra();
+                          cmdProvider.socket.write(cmdProvider.servoComando);
+                        });
+                      }), // controle grab
                       ControlesWidget(
                           Icons.arrow_right, 110, null), // controle direita
                     ],
                   ), // fim row
-            _servoSelecionado == ServoAtivo.Superior
+            _servoSelecionado == ServoAtivo.Superior ||
+                    _servoSelecionado == ServoAtivo.Medio
                 ?
                 // controle down
                 ControlesWidget(Icons.arrow_drop_down, 110, () {
-                    setState(() {
-                      cmdProvider.calcAngServo('S2', 'DOWN', _valorSlider);
-                    });
+                    if (_servoSelecionado == ServoAtivo.Medio) {
+                      setState(() {
+                       cmdProvider.calcAngServo('S3', 'DOWN', _valorSlider);
+                       cmdProvider.socket.write(cmdProvider.servoComando); 
+                      });
+                    } else {
+                      setState(() {
+                        cmdProvider.calcAngServo('S2', 'DOWN', _valorSlider);
+                        cmdProvider.socket.write(cmdProvider.servoComando);
+                      });
+                    }
                   })
                 : ControlesWidget(Icons.arrow_drop_down, 110, null),
 

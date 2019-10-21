@@ -14,6 +14,7 @@ import '../widgets/drawer.dart';
 enum ServoAtivo {
   Nenhum,
   Inferior,
+  Medio,
   Superior,
 }
 
@@ -30,7 +31,7 @@ class ControllerScreenState extends State<ControllerScreen> {
   final _ipController = TextEditingController();
   var _servoSelecionado = ServoAtivo.Nenhum;
   int _valorSlider = 0;
-  
+
   Socket s;
   bool _isConnected = false;
 
@@ -95,7 +96,7 @@ class ControllerScreenState extends State<ControllerScreen> {
                   });
                 } else {
                   setState(() {
-                   _isConnected = false; 
+                    _isConnected = false;
                   });
                 }
               },
@@ -127,6 +128,18 @@ class ControllerScreenState extends State<ControllerScreen> {
                   });
                 }, 'Inferior'),
               ),
+              //
+              //
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ButtonServoWidget(() {
+                  setState(() {
+                    _servoSelecionado = ServoAtivo.Medio;
+                  });
+                }, 'Medio'),
+              ),
+              //
+              //
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ButtonServoWidget(() {
@@ -139,10 +152,13 @@ class ControllerScreenState extends State<ControllerScreen> {
           ),
           _servoSelecionado == ServoAtivo.Superior
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
-                  cServo.calcAngServo('S2', 'UP', _valorSlider);
-                  print(cServo.angServo);
-                  // ip.write(cServo.servoComando);
-                  print('Superior Alto C & E');
+                  if (_servoSelecionado == ServoAtivo.Medio) {
+                    cServo.calcAngServo('S3', 'UP', _valorSlider);
+                    ip.write(cServo.servoComando);
+                  } else {
+                    cServo.calcAngServo('S2', 'UP', _valorSlider);
+                    ip.write(cServo.servoComando);
+                  }
                 })
               : ControlesWidget(
                   Icons.arrow_drop_up, 110, null), // controle cima
@@ -153,20 +169,16 @@ class ControllerScreenState extends State<ControllerScreen> {
                   children: <Widget>[
                     ControlesWidget(Icons.arrow_left, 110, () {
                       cServo.calcAngServo('S1', 'E', _valorSlider);
-                      print(cServo.angServo);
-                      //ip.write(cServo.servoComando);
-                      print('Inferior A\n');
+                      ip.write(cServo.servoComando);
                     }), // controle esquerda
                     ControlesWidget(Icons.radio_button_unchecked, 100, () {
                       cServo.garra();
-                      // ip.write(cServo.servoComando);
+                      ip.write(cServo.servoComando);
                       print('Garra/Grab');
                     }), // controle grab
                     ControlesWidget(Icons.arrow_right, 110, () {
                       cServo.calcAngServo('S1', 'D', _valorSlider);
-                      print(cServo.angServo);
-                      //ip.write(cServo.servoComando);
-                      print('Inferior A\n');
+                      ip.write(cServo.servoComando);
                     }) // controle direita
                   ],
                 )
@@ -180,21 +192,24 @@ class ControllerScreenState extends State<ControllerScreen> {
                       100,
                       () {
                         cServo.garra();
-                        // ip.write(cServo.servoComando);
-                        print('Garra/Grab');
+                        ip.write(cServo.servoComando);
                       },
                     ), // controle grab
                     ControlesWidget(
                         Icons.arrow_right, 110, null), // controle direita
                   ],
                 ), // fim row
-          _servoSelecionado == ServoAtivo.Superior
+          _servoSelecionado == ServoAtivo.Superior ||
+                  _servoSelecionado == ServoAtivo.Medio
               ?
               // controle down
               ControlesWidget(Icons.arrow_drop_down, 110, () {
-                  cServo.calcAngServo('S2', 'DOWN', _valorSlider);
-                  // ip.write(cServo.servoComando);
-                  print('Inferior Baixo D & F');
+                  if (_servoSelecionado == ServoAtivo.Medio) {
+                    cServo.calcAngServo('S3', 'DOWN', _valorSlider);
+                  } else {
+                    cServo.calcAngServo('S3', 'DOWN', _valorSlider);
+                    ip.write(cServo.servoComando);
+                  }
                 })
               : ControlesWidget(Icons.arrow_drop_down, 110, null),
 

@@ -17,10 +17,6 @@ class ComandosProvider with ChangeNotifier {
     return comandos;
   }
 
-  Socket get socketValue {
-    return socket;
-  }
-
   String get servoComando {
     return _servo;
   }
@@ -46,6 +42,7 @@ class ComandosProvider with ChangeNotifier {
   }
 
   void calcAngServo(String servo, String direcao, int precisao) {
+    // ############## Servo 1 START ##############
     if (servo == 'S1' && direcao == 'D') {
       _angServo += precisao;
 
@@ -55,6 +52,7 @@ class ComandosProvider with ChangeNotifier {
 
       if (_isRecording) {
         comandos.add('W:A:$_angServo:$precisao');
+        _servo = 'A:$_angServo:$precisao';
       } else {
         _servo = 'A:$_angServo:$precisao';
       }
@@ -68,9 +66,21 @@ class ComandosProvider with ChangeNotifier {
       if (_angServo <= 0) {
         _angServo = 0;
       }
-      _servo = 'A:$_angServo:$precisao';
+
+      if (_isRecording) {
+        comandos.add('W:A:$_angServo:$precisao');
+        _servo = 'A:$_angServo:$precisao';
+      } else {
+        _servo = 'A:$_angServo:$precisao';
+      }
+
       print(_servo);
     }
+    // ############## Servo 1 END ##############
+
+    // #########################################
+
+    // ############## Servo 2 START ############
 
     if (servo == 'S2' && direcao == 'UP') {
       _angServo += precisao;
@@ -106,6 +116,11 @@ class ComandosProvider with ChangeNotifier {
       print(_servo);
     }
 
+    // ############## Servo 2 END ##############
+
+    // #########################################
+
+    // ############## Servo 3 START ############
     if (servo == 'S3' && direcao == 'UP') {
       _angServo += precisao;
 
@@ -113,7 +128,13 @@ class ComandosProvider with ChangeNotifier {
         _angServo = 180;
       }
 
-      _servo = 'D:$_angServo:$precisao';
+      if (_isRecording) {
+        comandos.add('W:D:$_angServo:$precisao');
+        _servo = 'W:D:$_angServo:$precisao';
+      } else {
+        _servo = 'D:$_angServo:$precisao';
+      }
+      
       print(_servo);
     }
 
@@ -124,9 +145,19 @@ class ComandosProvider with ChangeNotifier {
         _angServo = 180;
       }
 
-      _servo = 'D:$_angServo:$precisao';
+      if (_isRecording) {
+        comandos.add('W:D:$_angServo:$precisao');
+        _servo = 'W:D:$_angServo:$precisao';
+      } else {
+        _servo = 'D:$_angServo:$precisao';
+      }
+
       print(_servo);
     }
+
+    // ############## Servo 3 END ##############
+
+    // #########################################
   }
 
   void garra() {
