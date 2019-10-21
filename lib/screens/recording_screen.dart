@@ -5,7 +5,7 @@ import '../providers/comandos_provider.dart';
 import '../widgets/controles.dart';
 import '../widgets/servos.dart';
 import '../widgets/lista_comandos.dart';
-import '../widgets/drawer.dart';
+import '../widgets/options_drawer.dart';
 
 enum ServoAtivo {
   Nenhum,
@@ -24,12 +24,14 @@ class RecordingScreen extends StatefulWidget {
 class _RecordingScreenState extends State<RecordingScreen> {
   var _servoSelecionado = ServoAtivo.Nenhum;
   int _valorSlider = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final cmdProvider = Provider.of<ComandosProvider>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Need an Arm - Gravando'),
         actions: <Widget>[
@@ -42,8 +44,12 @@ class _RecordingScreenState extends State<RecordingScreen> {
             },
           ),
         ],
+        leading: IconButton(
+          icon: Icon(Icons.settings_applications),
+          onPressed: () => _scaffoldKey.currentState.openDrawer(),
+        ),
       ),
-      drawer: AppDrawer(),
+      drawer: OptionsDrawer(),
       body: SingleChildScrollView(
         child: Column(
           // coluna principal, armazena todos os widgets
@@ -89,12 +95,14 @@ class _RecordingScreenState extends State<RecordingScreen> {
                 ? ControlesWidget(Icons.arrow_drop_up, 110, () {
                     if (_servoSelecionado == ServoAtivo.Medio) {
                       setState(() {
-                        cmdProvider.calcAngServo('S3', 'UP', _valorSlider);
+                        cmdProvider.calcAngServo(
+                            'S3', 'UP', cmdProvider.precisionValue);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     } else {
                       setState(() {
-                        cmdProvider.calcAngServo('S2', 'UP', _valorSlider);
+                        cmdProvider.calcAngServo(
+                            'S2', 'UP', cmdProvider.precisionValue);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     }
@@ -109,20 +117,20 @@ class _RecordingScreenState extends State<RecordingScreen> {
                       ControlesWidget(Icons.arrow_left, 110, () {
                         setState(() {
                           cmdProvider.calcAngServo('S1', 'E', _valorSlider);
-                          cmdProvider.socket.write(cmdProvider.servoComando);
                         });
+                        cmdProvider.socket.write(cmdProvider.servoComando);
                       }), // controle esquerda
                       ControlesWidget(Icons.radio_button_unchecked, 100, () {
                         setState(() {
                           cmdProvider.garra();
-                          cmdProvider.socket.write(cmdProvider.servoComando);
                         });
+                        cmdProvider.socket.write(cmdProvider.servoComando);
                       }), // controle grab
                       ControlesWidget(Icons.arrow_right, 110, () {
                         setState(() {
                           cmdProvider.calcAngServo('S1', 'D', _valorSlider);
-                          cmdProvider.socket.write(cmdProvider.servoComando);
                         });
+                        cmdProvider.socket.write(cmdProvider.servoComando);
                       }) // controle direita
                     ],
                   )
@@ -134,8 +142,8 @@ class _RecordingScreenState extends State<RecordingScreen> {
                       ControlesWidget(Icons.radio_button_unchecked, 100, () {
                         setState(() {
                           cmdProvider.garra();
-                          cmdProvider.socket.write(cmdProvider.servoComando);
                         });
+                        cmdProvider.socket.write(cmdProvider.servoComando);
                       }), // controle grab
                       ControlesWidget(
                           Icons.arrow_right, 110, null), // controle direita
@@ -148,14 +156,14 @@ class _RecordingScreenState extends State<RecordingScreen> {
                 ControlesWidget(Icons.arrow_drop_down, 110, () {
                     if (_servoSelecionado == ServoAtivo.Medio) {
                       setState(() {
-                       cmdProvider.calcAngServo('S3', 'DOWN', _valorSlider);
-                       cmdProvider.socket.write(cmdProvider.servoComando); 
+                        cmdProvider.calcAngServo('S3', 'DOWN', _valorSlider);
                       });
+                      cmdProvider.socket.write(cmdProvider.servoComando);
                     } else {
                       setState(() {
                         cmdProvider.calcAngServo('S2', 'DOWN', _valorSlider);
-                        cmdProvider.socket.write(cmdProvider.servoComando);
                       });
+                      cmdProvider.socket.write(cmdProvider.servoComando);
                     }
                   })
                 : ControlesWidget(Icons.arrow_drop_down, 110, null),

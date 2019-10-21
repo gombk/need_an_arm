@@ -12,7 +12,10 @@ class ComandosProvider with ChangeNotifier {
   bool _isRecording = false;
   bool isOpen = true;
   List<String> comandos = [];
+  int _precisionValue = 0;
+  int _delayValue = 0;
 
+  // GETTERS START
   List<String> get cmd {
     return comandos;
   }
@@ -28,6 +31,16 @@ class ComandosProvider with ChangeNotifier {
   bool get connected {
     return _isConnected;
   }
+
+  int get precisionValue {
+    return _precisionValue;
+  }
+
+  int get delayValue {
+    return _delayValue;
+  }
+
+  // GETTERS END
 
   void changeMode() {
     _isRecording = !_isRecording;
@@ -134,7 +147,7 @@ class ComandosProvider with ChangeNotifier {
       } else {
         _servo = 'D:$_angServo:$precisao';
       }
-      
+
       print(_servo);
     }
 
@@ -220,5 +233,12 @@ class ComandosProvider with ChangeNotifier {
 
   void doneHandler() {
     socket.destroy();
+  }
+
+  void receiveDelayAndPrecisionValues({int precision, int delay}) {
+    precision = _precisionValue.round();
+    delay = _delayValue.round();
+
+    notifyListeners();
   }
 }

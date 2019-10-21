@@ -85,12 +85,6 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 _readPrefIP();
                 _fixateIP = !_fixateIP;
                 newValue = _fixateIP;
-
-                if (newValue) {
-                  _savePrefIP();
-                } else {
-                  _removePrefIP();
-                }
               });
             }),
             _fixateIP

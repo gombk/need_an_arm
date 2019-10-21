@@ -50,17 +50,26 @@ class ControllerScreenState extends State<ControllerScreen> {
             ? Text('Conectar ao Socket')
             : Text('Need an arm - Controlador'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.restore),
-            onPressed: () {
-              print('Reset');
-              setState(() {
-                _isConnected = false;
-                ipProvider.socket.close();
-                _servoSelecionado = ServoAtivo.Nenhum;
-              });
-            },
-          ),
+          _isConnected == false
+              ? IconButton(
+                  icon: Icon(Icons.navigate_next),
+                  onPressed: () {
+                    setState(() {
+                      _isConnected = true;
+                    });
+                  },
+                )
+              : IconButton(
+                  icon: Icon(Icons.restore),
+                  onPressed: () {
+                    print('Reset');
+                    setState(() {
+                      _isConnected = false;
+                      _servoSelecionado = ServoAtivo.Nenhum;
+                    });
+                    ipProvider.socket.close();
+                  },
+                ),
         ],
       ),
       drawer: AppDrawer(),
@@ -150,7 +159,8 @@ class ControllerScreenState extends State<ControllerScreen> {
               ),
             ],
           ),
-          _servoSelecionado == ServoAtivo.Superior
+          _servoSelecionado == ServoAtivo.Superior ||
+                  _servoSelecionado == ServoAtivo.Medio
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
                   if (_servoSelecionado == ServoAtivo.Medio) {
                     cServo.calcAngServo('S3', 'UP', _valorSlider);
