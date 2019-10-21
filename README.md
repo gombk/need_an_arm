@@ -2,8 +2,14 @@
 
 Mobile application for controlling a robotic arm.
 
-**Application scope**
+# Application scope
 This is app is responsible to control a robotic arm via socket on your local/remote network (for remote connections you need to setup the port in the configurations of the app or in the source). The app is configured to control a robotic arm with 3 servo-motors.
+
+# TODO
+To do list    |
+------------- |
+Finish the recording feature  |
+Finish the options screen  |
 
 # Required software & equipments 
 1. ESP-32
