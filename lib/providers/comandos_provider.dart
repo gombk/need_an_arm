@@ -156,7 +156,7 @@ class ComandosProvider with ChangeNotifier {
         socket.listen(dataHandler,
             onError: errorHandler, onDone: doneHandler, cancelOnError: false);
       }).catchError((AsyncError e) {
-        print("Unable to connect: $e");
+        print("Não foi possível conectar em $host:80\nErro: $e");
       });
 
       print('Conectado com sucesso');
