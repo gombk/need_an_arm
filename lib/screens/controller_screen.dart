@@ -19,14 +19,14 @@ enum ServoAtivo {
 
 // REGEX IP \b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b
 
-class TelaPrincipal extends StatefulWidget {
+class ControllerScreen extends StatefulWidget {
   static const routeName = '/tela-principal';
 
   @override
-  TelaPrincipalState createState() => TelaPrincipalState();
+  ControllerScreenState createState() => ControllerScreenState();
 }
 
-class TelaPrincipalState extends State<TelaPrincipal> {
+class ControllerScreenState extends State<ControllerScreen> {
   final _ipController = TextEditingController();
   var _servoSelecionado = ServoAtivo.Nenhum;
   int _valorSlider = 0;
@@ -67,9 +67,6 @@ class TelaPrincipalState extends State<TelaPrincipal> {
           ? ConnectionWidget(
               ipController: _ipController,
               submitIp: () {
-                var ipPattern = r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
-                RegExp regExp = new RegExp(ipPattern);
-
                 if (_ipController.text.isEmpty) {
                   Fluttertoast.showToast(
                     msg: 'O IP não pode ser vazio',
@@ -92,31 +89,25 @@ class TelaPrincipalState extends State<TelaPrincipal> {
 
                 ipProvider.connect(enteredIP);
 
-                setState(() {
-                  _isConnected = !_isConnected;
-                });
-
-                // if (ipProvider.connected) {
-                //   setState(() {
-                //     _isConnected = true;
-                //   });
-                // } else {
-                //   setState(() {
-                //    _isConnected = true; 
-                //   });
-                // }
-
-                print(ipProvider.socket);
+                if (ipProvider.connected) {
+                  setState(() {
+                    _isConnected = true;
+                  });
+                } else {
+                  setState(() {
+                   _isConnected = false; 
+                  });
+                }
               },
             )
-          : mainScreenFunc(ipProvider.socket),
+          : controllerScreenFunc(ipProvider.socket),
       // FAB que irá realizar a função de gravar
       // TO DO: se estiver gravando o FAB irá mudar para parar a gravação
       floatingActionButton: _isConnected ? FabGravar() : null,
     );
   }
 
-  Widget mainScreenFunc(Socket ip) {
+  Widget controllerScreenFunc(Socket ip) {
     var cServo = ComandosProvider();
     return SingleChildScrollView(
       child: Column(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
-import './screens/tela_principal.dart';
+import './screens/controller_screen.dart';
 import './screens/splash_screen.dart';
 import './screens/help_screen.dart';
 import './screens/options_screen.dart';
@@ -37,10 +37,8 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (ctx) => SplashScreen(),
-          TelaPrincipal.routeName: (ctx) => TelaPrincipal(),
-          RecordingScreen.routeName: (ctx) => RecordingScreen(
-                channel: null,
-              ),
+          ControllerScreen.routeName: (ctx) => ControllerScreen(),
+          RecordingScreen.routeName: (ctx) => RecordingScreen(),
           ProfileScreen.routeName: (ctx) => ProfileScreen(),
           OptionsScreen.routeName: (ctx) => OptionsScreen(),
           HelpScreen.routeName: (ctx) => HelpScreen(),

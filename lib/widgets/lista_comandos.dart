@@ -14,12 +14,22 @@ class _ListaComandosState extends State<ListaComandos> {
   @override
   Widget build(BuildContext context) {
     final cmdProvider = Provider.of<ComandosProvider>(context);
+
     return ListView.builder(
       itemBuilder: (ctx, i) {
         return Column(
           children: <Widget>[
             Dismissible(
-              child: Text('${cmdProvider.comandos}'),
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Text(
+                  '${cmdProvider.comandos[i]}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
               background: Container(
                 child: Icon(
                   Icons.delete,

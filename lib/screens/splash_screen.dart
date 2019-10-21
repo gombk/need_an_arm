@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flare_flutter/flare_actor.dart';
 
-import './tela_principal.dart';
+import './controller_screen.dart';
 
 // https://www.2dimensions.com/a/rickseifarth/files/flare/robot-arm/preview
 
@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () => Navigator.of(context)
-                  .pushReplacementNamed(TelaPrincipal.routeName),
+                  .pushReplacementNamed(ControllerScreen.routeName),
             ),
           ),
         ],

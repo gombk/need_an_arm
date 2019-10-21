@@ -27,13 +27,19 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
             autocorrect: false,
             autofocus: true,
             decoration: const InputDecoration(labelText: 'Insira o IP'),
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.number,
             controller: widget.ipController,
             onFieldSubmitted: (_) {},
             validator: (value) {
+              var ipPattern = r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
+              RegExp regExp = new RegExp(ipPattern);
+
               if (value.isEmpty) {
                 return 'Por favor, insira um IP';
+              } else if (regExp.hasMatch(value)) {
+                return 'Padrão inválido';
               }
+
               return null;
             },
           ),

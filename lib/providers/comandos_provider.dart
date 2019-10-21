@@ -1,11 +1,12 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ComandosProvider with ChangeNotifier {
-  Socket _socket;
-  bool isConnected;
+  Socket socket;
+  bool _isConnected = false;
   int _angServo = 0;
   String _servo;
   bool _isRecording = false;
@@ -16,8 +17,8 @@ class ComandosProvider with ChangeNotifier {
     return comandos;
   }
 
-  Socket get socket {
-    return _socket;
+  Socket get socketValue {
+    return socket;
   }
 
   String get servoComando {
@@ -29,19 +30,8 @@ class ComandosProvider with ChangeNotifier {
   }
 
   bool get connected {
-    return isConnected;
+    return _isConnected;
   }
-
-  /* função de teste por que eu simplesmente posso adicionar o valor em uma das funções abaixo :)
-  mas quando eu fiz isso achei que era assim que tinha que fazer, mas pensando bem é apenas desperdício
-  de recurso xD
-  */
-  void addComando(String value) {
-    comandos.add(value);
-
-    notifyListeners();
-  }
-  // fim da função de teste
 
   void changeMode() {
     _isRecording = !_isRecording;
@@ -91,11 +81,11 @@ class ComandosProvider with ChangeNotifier {
 
       if (_isRecording) {
         comandos.add('W:C:$_angServo:$precisao');
+        _servo = 'W:C:$_angServo:$precisao';
       } else {
         _servo = 'C:$_angServo:$precisao';
       }
 
-      _servo = 'C:$_angServo:$precisao';
       print(_servo);
     }
 
@@ -106,7 +96,13 @@ class ComandosProvider with ChangeNotifier {
         _angServo = 0;
       }
 
-      _servo = 'C:$_angServo:$precisao';
+      if (_isRecording) {
+        comandos.add('W:C:$_angServo:$precisao');
+        _servo = 'W:C:$_angServo:$precisao';
+      } else {
+        _servo = 'C:$_angServo:$precisao';
+      }
+
       print(_servo);
     }
 
@@ -154,24 +150,44 @@ class ComandosProvider with ChangeNotifier {
         toastLength: Toast.LENGTH_SHORT,
       );
 
-      _socket = await Socket.connect(host, 80);
-      isConnected = true;
+      socket = await Socket.connect(host, 80).then((Socket sock) {
+        _isConnected = true;
+        socket = sock;
+        socket.listen(dataHandler,
+            onError: errorHandler, onDone: doneHandler, cancelOnError: false);
+      }).catchError((AsyncError e) {
+        print("Unable to connect: $e");
+      });
 
       print('Conectado com sucesso');
       Fluttertoast.showToast(
-        msg: 'Conectado com sucesso em $host',
+        msg: 'Conectado com sucesso em $host:80',
         toastLength: Toast.LENGTH_SHORT,
+        textColor: Colors.white,
+        backgroundColor: Colors.green,
       );
-
-      notifyListeners();
     } catch (e) {
       print('Falha ao conectar-se em $host\n$e');
       Fluttertoast.showToast(
-        msg: 'Falha ao tentar se conectar em $host',
+        msg: 'Falha ao tentar se conectar em $host:80',
         backgroundColor: Colors.red,
         textColor: Colors.white,
         toastLength: Toast.LENGTH_LONG,
       );
+      _isConnected = false;
     }
+    notifyListeners();
+  }
+
+  void dataHandler(data) {
+    print(new String.fromCharCodes(data).trim());
+  }
+
+  void errorHandler(error, StackTrace trace) {
+    print(error);
+  }
+
+  void doneHandler() {
+    socket.destroy();
   }
 }

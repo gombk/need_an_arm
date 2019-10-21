@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../screens/help_screen.dart';
 import '../screens/options_screen.dart';
 import '../screens/profile_screen.dart';
-import '../screens/tela_principal.dart';
+import '../screens/controller_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -22,7 +22,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Controlador'),
             onTap: () {
               Navigator.of(context)
-                  .pushReplacementNamed(TelaPrincipal.routeName);
+                  .pushReplacementNamed(ControllerScreen.routeName);
             },
           ),
           Divider(),
