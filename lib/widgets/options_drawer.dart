@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/comandos_provider.dart';
+import '../providers/settings_drawer_provider.dart';
 
 class OptionsDrawer extends StatefulWidget {
   @override
@@ -11,10 +11,19 @@ class OptionsDrawer extends StatefulWidget {
 class _OptionsDrawerState extends State<OptionsDrawer> {
   int _sliderPrecisao = 0;
   int _sliderDelay = 0;
+  int global = 0;
+
+  @override
+  void initState() {
+    setState(() {
+     _sliderPrecisao = global;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final valueProvider = Provider.of<ComandosProvider>(context);
+    final valueProvider = Provider.of<SettingsDrawerProvider>(context);
     return Drawer(
       child: Column(
         children: <Widget>[
@@ -39,12 +48,13 @@ class _OptionsDrawerState extends State<OptionsDrawer> {
             min: 0.0,
             max: 180.0,
             divisions: 180,
-            label: '$_sliderPrecisao',
+            label: '${valueProvider.precisionValue}',
             onChanged: (double newValue) {
               setState(() {
                 _sliderPrecisao = newValue.round();
                 valueProvider.receiveDelayAndPrecisionValues(
                     precision: _sliderPrecisao);
+                    global = valueProvider.precisionValue;
               });
             },
           ),
@@ -66,12 +76,12 @@ class _OptionsDrawerState extends State<OptionsDrawer> {
             min: 0.0,
             max: 10000.0,
             divisions: 100,
-            label: '$_sliderDelay',
+            label: '${valueProvider.delayValue}',
             onChanged: (double newValue) {
               setState(() {
                 _sliderDelay = newValue.round();
                 valueProvider.receiveDelayAndPrecisionValues(
-                    delay: _sliderPrecisao);
+                    delay: _sliderDelay);
               });
             },
           ),

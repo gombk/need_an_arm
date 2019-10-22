@@ -10,6 +10,7 @@ import './screens/profile_screen.dart';
 import './screens/recording_screen.dart';
 
 import './providers/comandos_provider.dart';
+import './providers/settings_drawer_provider.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([
@@ -22,8 +23,15 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      builder: (ctx) => ComandosProvider(),
+    return MultiProvider(
+      providers: <SingleChildCloneableWidget>[
+        ChangeNotifierProvider<ComandosProvider>(
+          builder: (_) => ComandosProvider(),
+        ),
+        ChangeNotifierProvider<SettingsDrawerProvider>(
+          builder: (_) => SettingsDrawerProvider(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Need an Arm',
         theme: ThemeData(

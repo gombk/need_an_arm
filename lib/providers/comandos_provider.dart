@@ -65,7 +65,7 @@ class ComandosProvider with ChangeNotifier {
 
       if (_isRecording) {
         comandos.add('W:A:$_angServo:$precisao');
-        _servo = 'A:$_angServo:$precisao';
+        _servo = 'W:A:$_angServo:$precisao';
       } else {
         _servo = 'A:$_angServo:$precisao';
       }
@@ -82,7 +82,7 @@ class ComandosProvider with ChangeNotifier {
 
       if (_isRecording) {
         comandos.add('W:A:$_angServo:$precisao');
-        _servo = 'A:$_angServo:$precisao';
+        _servo = 'W:A:$_angServo:$precisao';
       } else {
         _servo = 'A:$_angServo:$precisao';
       }
@@ -185,23 +185,37 @@ class ComandosProvider with ChangeNotifier {
     }
   }
 
+  void onLoading(BuildContext ctx, String host) {
+    showDialog(
+      context: ctx,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                Text('Conectando em $host'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pop(ctx); //pop dialog
+      connect(host);
+    });
+  }
+
   void connect(String host) async {
     try {
-      print('Trying to connect');
+      socket = await Socket.connect(host, 80);
 
-      Fluttertoast.showToast(
-        msg: 'Tentando conectar em $host',
-        toastLength: Toast.LENGTH_SHORT,
-      );
-
-      socket = await Socket.connect(host, 80).then((Socket sock) {
-        _isConnected = true;
-        socket = sock;
-        socket.listen(dataHandler,
-            onError: errorHandler, onDone: doneHandler, cancelOnError: false);
-      }).catchError((AsyncError e) {
-        print("Não foi possível conectar em $host:80\nErro: $e");
-      });
+      _isConnected = true;
 
       print('Conectado com sucesso');
       Fluttertoast.showToast(
@@ -224,7 +238,7 @@ class ComandosProvider with ChangeNotifier {
   }
 
   void dataHandler(data) {
-    print(new String.fromCharCodes(data).trim());
+    // print(new String.fromCharCodes(data).trim());
   }
 
   void errorHandler(error, StackTrace trace) {

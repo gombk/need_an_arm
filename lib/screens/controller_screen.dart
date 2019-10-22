@@ -63,11 +63,11 @@ class ControllerScreenState extends State<ControllerScreen> {
                   icon: Icon(Icons.restore),
                   onPressed: () {
                     print('Reset');
+                    ipProvider.socket.close();
                     setState(() {
                       _isConnected = false;
                       _servoSelecionado = ServoAtivo.Nenhum;
                     });
-                    ipProvider.socket.close();
                   },
                 ),
         ],
@@ -93,11 +93,10 @@ class ControllerScreenState extends State<ControllerScreen> {
                   print('$enteredIP está vazio');
                   return;
                 }
-                // else if (regExp.hasMatch(enteredIP)) {
-                //   print('No match');
-                // }
 
                 ipProvider.connect(enteredIP);
+
+                // ipProvider.onLoading(context, enteredIP);
 
                 if (ipProvider.connected) {
                   setState(() {
