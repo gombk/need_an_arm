@@ -31,12 +31,12 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
             controller: widget.ipController,
             onFieldSubmitted: (_) {},
             validator: (value) {
-              var ipPattern = r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
-              RegExp regExp = new RegExp(ipPattern);
+              String padraoIP = r'(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)';
+              RegExp regExp = RegExp(padraoIP);
 
               if (value.isEmpty) {
                 return 'Por favor, insira um IP';
-              } else if (regExp.hasMatch(value)) {
+              } else if (!regExp.hasMatch(value)) {
                 return 'Padrão inválido';
               }
 
