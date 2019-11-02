@@ -47,8 +47,12 @@ bool FirstCommand = true;
 
 WiFiServer wifiServer(80);
 
-const char* ssid = "PALINI";
-const char* pass = "us7pe10sf2pa5";
+//const char* ssid = "PALINI";
+//const char* pass = "us7pe10sf2pa5";
+
+const char* ssid = "Heimskr";
+const char* pass = "THEENDOFTIMES";
+
 
 void drawLines() {
   
@@ -107,9 +111,9 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
         return;
     }
     if(file.print(message)){
-        Serial.println("- file written");
+        //Serial.println("- file written");
     } else {
-        Serial.println("- frite failed");
+        //Serial.println("- frite failed");
     }
 }
 
@@ -122,9 +126,9 @@ void appendFile(fs::FS &fs, const char * path, const char * message){
         return;
     }
     if(file.print(message)){
-        Serial.println("- message appended");
+        //Serial.println("- message appended");
     } else {
-        Serial.println("- append failed");
+        //Serial.println("- append failed");
     }
 }
 
@@ -167,13 +171,8 @@ void setup() {
         return;
     }
     
-    /*listDir(SPIFFS, "/", 0);
-    writeFile(SPIFFS, "/commands.txt", "A:0:500\r\n");
-    appendFile(SPIFFS, "/commands.txt", "B:0:500\r\n");
-    appendFile(SPIFFS, "/commands.txt", "A:90:500\r\n");
-    appendFile(SPIFFS, "/commands.txt", "B:90:500\r\n");
-    appendFile(SPIFFS, "/commands.txt", "A:180:500\r\n");
-    appendFile(SPIFFS, "/commands.txt", "B:180:500\r\n");*/
+    //listDir(SPIFFS, "/", 0);
+    //writeFile(SPIFFS, "/commands.txt", "");
 }
 
 void Movement(char* command, String modeOp)
@@ -186,12 +185,12 @@ void Movement(char* command, String modeOp)
               String VServo = getValue(command, ':', 2);
 
               Serial.println(WServo);
-              
               int PosServo = PServo.toInt();
               Serial.println(PosServo);
               int VelServo = VServo.toInt();
               Serial.println(VelServo);
 
+              
 
               /*Para fazer a gravação primeiro deve ser enviado um comando E sozinho para ele recriar o arquivo e após isso 
                *enviar o comando da seguinte maneira W:A:0:0 sendo q o W é o comando de escrita e os seguintes são os
@@ -224,10 +223,30 @@ void Movement(char* command, String modeOp)
                 Serial.println(PosServo); 
               }else if(WServo == "E") //Executa comando de WriteFile
               {
-                writeFile(SPIFFS, "/commands.txt",  ""); //Cria um arquivo vazio para depois ser carregado com os comandos
+                Serial.print("Erasing file");
+                writeFile(SPIFFS, "/commands.txt",  "A:0:0"); //Cria um arquivo vazio para depois ser carregado com os comandos
+                writeFile(SPIFFS, "/commands.txt",  "B:0:0");
+                writeFile(SPIFFS, "/commands.txt",  "C:0:0");
+                writeFile(SPIFFS, "/commands.txt",  "D:0:0");
               }else if(WServo == "W") //Adiciona comandos ao arquivo existente
               {
-                appendFile(SPIFFS, "/commands.txt", command); //Grava no arquivo o comando recebido
+                WServo = getValue(command, ':', 1);
+                PServo = getValue(command, ':', 2);
+                VServo = getValue(command, ':', 3);
+
+                
+                String commandConcat = WServo + ":" + PServo + ":" + VServo;
+
+                char commandConcatChar[50];
+                commandConcat.toCharArray(commandConcatChar, 50); 
+                
+                Serial.print("Writing: ");
+                Serial.println(commandConcatChar);
+                
+                appendFile(SPIFFS, "/commands.txt", commandConcatChar); //Grava no arquivo o comando recebido
+
+                Serial.println("Pulando linha");
+                
                 appendFile(SPIFFS, "/commands.txt", "\r\n"); //Pula uma linha pra o proximo comando
               }else{
                 Serial.println("Command not found");
@@ -276,20 +295,19 @@ void readFile(fs::FS &fs, const char * path){
 
     char buffer[64];
         while (file.available()) {
-        client = wifiServer.available();
+        //client = wifiServer.available();
         if(!client.connected())
         {
           int l = file.readBytesUntil('\n', buffer, sizeof(buffer));
           buffer[l] = 0;
-          Serial.println("Message Received: ");
-          Serial.write(buffer);    
+          //Serial.println("Message Received: ");
+          //Serial.write(buffer);    
           Movement(buffer, "Standalone");  
         }else{
           Serial.print("Client Connected");
           digitalWrite(ledPin, LOW);
           break;
         }
-        
       }
 }
 
@@ -311,7 +329,6 @@ void loop() {
     client.stop();
     Serial.println("Client disconnected");
     digitalWrite(ledPin, HIGH);
-    readFile(SPIFFS, "/commands.txt");
   }else{
     Serial.println("No Client Connected");
     digitalWrite(ledPin, HIGH);
