@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsDrawerProvider with ChangeNotifier {
-  int _precisionValue;
-  int _delayValue;
+  Future<bool> setPrecisionValue(int precisionValue) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('precision', precisionValue);
 
-  int get precisionValue {
-    return _precisionValue;
+    return prefs.commit();
   }
 
-  int get delayValue {
-    return _delayValue;
-  }
+  Future<bool> setDelayValue(int delayValue) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('delay', delayValue);
 
-  void receiveDelayAndPrecisionValues({int precision, int delay}) {
-    _precisionValue = precision;
-    _delayValue = delay;
-
-    notifyListeners();
+    return prefs.commit();
   }
 }

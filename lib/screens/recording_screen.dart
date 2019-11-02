@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../providers/comandos_provider.dart';
 import '../widgets/controles.dart';
@@ -23,8 +24,34 @@ class RecordingScreen extends StatefulWidget {
 
 class _RecordingScreenState extends State<RecordingScreen> {
   var _servoSelecionado = ServoAtivo.Nenhum;
-  int _valorSlider = 0;
+  int _precisao = 0;
+  int _delay = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void didChangeDependencies() {
+    getPrecisionValue().then(valorPrecisao);
+    getDelayValue().then(valorDelay);
+    print('');
+    super.didChangeDependencies();
+  }
+
+  void updateSharedPrefs() {
+    getPrecisionValue().then(valorPrecisao);
+    getDelayValue().then(valorDelay);
+  }
+
+  void valorPrecisao(int precisao) {
+    setState(() {
+      _precisao = precisao;
+    });
+  }
+
+  void valorDelay(int delay) {
+    setState(() {
+      _delay = delay;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +65,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
           IconButton(
             icon: Icon(Icons.restore_page),
             onPressed: () {
+              updateSharedPrefs();
               setState(() {
                 cmdProvider.resetComando();
               });
@@ -64,6 +92,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ButtonServoWidget(() {
                     setState(() {
+                      updateSharedPrefs();
                       _servoSelecionado = ServoAtivo.Inferior;
                     });
                   }, 'Inferior'),
@@ -74,6 +103,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ButtonServoWidget(() {
                     setState(() {
+                      updateSharedPrefs();
                       _servoSelecionado = ServoAtivo.Medio;
                     });
                   }, 'Medio'),
@@ -84,6 +114,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ButtonServoWidget(() {
                     setState(() {
+                      updateSharedPrefs();
                       _servoSelecionado = ServoAtivo.Superior;
                     });
                   }, 'Superior'),
@@ -95,12 +126,14 @@ class _RecordingScreenState extends State<RecordingScreen> {
                 ? ControlesWidget(Icons.arrow_drop_up, 110, () {
                     if (_servoSelecionado == ServoAtivo.Medio) {
                       setState(() {
+                        updateSharedPrefs();
                         cmdProvider.calcAngServo(
                             'S3', 'UP', cmdProvider.precisionValue);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     } else {
                       setState(() {
+                        updateSharedPrefs();
                         cmdProvider.calcAngServo(
                             'S2', 'UP', cmdProvider.precisionValue);
                       });
@@ -116,19 +149,22 @@ class _RecordingScreenState extends State<RecordingScreen> {
                     children: <Widget>[
                       ControlesWidget(Icons.arrow_left, 110, () {
                         setState(() {
-                          cmdProvider.calcAngServo('S1', 'E', _valorSlider);
+                          updateSharedPrefs();
+                          cmdProvider.calcAngServo('S1', 'E', _precisao);
                         });
                         cmdProvider.socket.write(cmdProvider.servoComando);
                       }), // controle esquerda
                       ControlesWidget(Icons.radio_button_unchecked, 100, () {
                         setState(() {
+                          updateSharedPrefs();
                           cmdProvider.garra();
                         });
                         cmdProvider.socket.write(cmdProvider.servoComando);
                       }), // controle grab
                       ControlesWidget(Icons.arrow_right, 110, () {
                         setState(() {
-                          cmdProvider.calcAngServo('S1', 'D', _valorSlider);
+                          updateSharedPrefs();
+                          cmdProvider.calcAngServo('S1', 'D', _precisao);
                         });
                         cmdProvider.socket.write(cmdProvider.servoComando);
                       }) // controle direita
@@ -141,6 +177,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
                           Icons.arrow_left, 110, null), // controle esquerda
                       ControlesWidget(Icons.radio_button_unchecked, 100, () {
                         setState(() {
+                          updateSharedPrefs();
                           cmdProvider.garra();
                         });
                         cmdProvider.socket.write(cmdProvider.servoComando);
@@ -156,33 +193,19 @@ class _RecordingScreenState extends State<RecordingScreen> {
                 ControlesWidget(Icons.arrow_drop_down, 110, () {
                     if (_servoSelecionado == ServoAtivo.Medio) {
                       setState(() {
-                        cmdProvider.calcAngServo('S3', 'DOWN', _valorSlider);
+                        updateSharedPrefs();
+                        cmdProvider.calcAngServo('S3', 'DOWN', _precisao);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     } else {
                       setState(() {
-                        cmdProvider.calcAngServo('S2', 'DOWN', _valorSlider);
+                        updateSharedPrefs();
+                        cmdProvider.calcAngServo('S2', 'DOWN', _precisao);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     }
                   })
                 : ControlesWidget(Icons.arrow_drop_down, 110, null),
-
-            // slider de velocidade
-            Text('Selecione a precisão'),
-            Slider(
-              activeColor: Theme.of(context).accentColor,
-              value: _valorSlider.toDouble(),
-              min: 0.0,
-              max: 180.0,
-              divisions: 180,
-              label: '$_valorSlider',
-              onChanged: (double newValue) {
-                setState(() {
-                  _valorSlider = newValue.round();
-                });
-              },
-            ),
 
             Container(
               height: 150,
@@ -206,4 +229,16 @@ class _RecordingScreenState extends State<RecordingScreen> {
       ),
     );
   }
+}
+
+Future<int> getPrecisionValue() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return prefs.getInt('precision');
+}
+
+Future<int> getDelayValue() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return prefs.getInt('delay');
 }

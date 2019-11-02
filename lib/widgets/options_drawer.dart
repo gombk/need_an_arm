@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../providers/settings_drawer_provider.dart';
 
@@ -15,10 +16,21 @@ class _OptionsDrawerState extends State<OptionsDrawer> {
 
   @override
   void initState() {
-    setState(() {
-     _sliderPrecisao = global;
-    });
+    getPrecisionValue().then(valorPrecisao);
+    getDelayValue().then(valorDelay);
     super.initState();
+  }
+
+  void valorPrecisao(int precisao) {
+    setState(() {
+      _sliderPrecisao = precisao;
+    });
+  }
+
+  void valorDelay(int delay) {
+    setState(() {
+      _sliderDelay = delay;
+    });
   }
 
   @override
@@ -48,13 +60,11 @@ class _OptionsDrawerState extends State<OptionsDrawer> {
             min: 0.0,
             max: 180.0,
             divisions: 180,
-            label: '${valueProvider.precisionValue}',
+            label: '$_sliderPrecisao',
             onChanged: (double newValue) {
               setState(() {
                 _sliderPrecisao = newValue.round();
-                valueProvider.receiveDelayAndPrecisionValues(
-                    precision: _sliderPrecisao);
-                    global = valueProvider.precisionValue;
+                setPrecisionValue(_sliderPrecisao);
               });
             },
           ),
@@ -74,14 +84,13 @@ class _OptionsDrawerState extends State<OptionsDrawer> {
             activeColor: Colors.blueAccent,
             value: _sliderDelay.toDouble(),
             min: 0.0,
-            max: 10000.0,
+            max: 5000.0,
             divisions: 100,
-            label: '${valueProvider.delayValue}',
+            label: '$_sliderDelay',
             onChanged: (double newValue) {
               setState(() {
                 _sliderDelay = newValue.round();
-                valueProvider.receiveDelayAndPrecisionValues(
-                    delay: _sliderDelay);
+                setDelayValue(_sliderDelay);
               });
             },
           ),
@@ -89,4 +98,30 @@ class _OptionsDrawerState extends State<OptionsDrawer> {
       ),
     );
   }
+}
+
+Future<int> getPrecisionValue() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return prefs.getInt('precision');
+}
+
+Future<int> getDelayValue() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return prefs.getInt('delay');
+}
+
+Future<bool> setPrecisionValue(int precisionValue) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt('precision', precisionValue);
+
+  return prefs.commit();
+}
+
+Future<bool> setDelayValue(int delayValue) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt('delay', delayValue);
+
+  return prefs.commit();
 }

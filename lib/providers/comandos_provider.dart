@@ -17,7 +17,7 @@ class ComandosProvider with ChangeNotifier {
 
   // GETTERS START
   List<String> get cmd {
-    return comandos;
+    return [...comandos];
   }
 
   String get servoComando {
@@ -155,7 +155,7 @@ class ComandosProvider with ChangeNotifier {
       _angServo -= precisao;
 
       if (_angServo <= 0) {
-        _angServo = 180;
+        _angServo = 0;
       }
 
       if (_isRecording) {
@@ -247,12 +247,5 @@ class ComandosProvider with ChangeNotifier {
 
   void doneHandler() {
     socket.destroy();
-  }
-
-  void receiveDelayAndPrecisionValues({int precision, int delay}) {
-    precision = _precisionValue.round();
-    delay = _delayValue.round();
-
-    notifyListeners();
   }
 }
