@@ -162,10 +162,10 @@ class ControllerScreenState extends State<ControllerScreen> {
                   _servoSelecionado == ServoAtivo.Medio
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
                   if (_servoSelecionado == ServoAtivo.Medio) {
-                    cServo.calcAngServo('S3', 'UP', _valorSlider);
+                    cServo.calcAngServo(servo: 'S3', direcao: 'UP', precisao: _valorSlider);
                     ip.write(cServo.servoComando);
                   } else {
-                    cServo.calcAngServo('S2', 'UP', _valorSlider);
+                    cServo.calcAngServo(servo: 'S2', direcao: 'UP', precisao: _valorSlider);
                     ip.write(cServo.servoComando);
                   }
                 })
@@ -177,7 +177,7 @@ class ControllerScreenState extends State<ControllerScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ControlesWidget(Icons.arrow_left, 110, () {
-                      cServo.calcAngServo('S1', 'E', _valorSlider);
+                      cServo.calcAngServo(servo: 'S1', direcao: 'E', precisao: _valorSlider);
                       ip.write(cServo.servoComando);
                     }), // controle esquerda
                     ControlesWidget(Icons.radio_button_unchecked, 100, () {
@@ -186,7 +186,7 @@ class ControllerScreenState extends State<ControllerScreen> {
                       print('Garra/Grab');
                     }), // controle grab
                     ControlesWidget(Icons.arrow_right, 110, () {
-                      cServo.calcAngServo('S1', 'D', _valorSlider);
+                      cServo.calcAngServo(servo: 'S1', direcao: 'D', precisao: _valorSlider);
                       ip.write(cServo.servoComando);
                     }) // controle direita
                   ],
@@ -214,9 +214,9 @@ class ControllerScreenState extends State<ControllerScreen> {
               // controle down
               ControlesWidget(Icons.arrow_drop_down, 110, () {
                   if (_servoSelecionado == ServoAtivo.Medio) {
-                    cServo.calcAngServo('S3', 'DOWN', _valorSlider);
+                    cServo.calcAngServo(servo: 'S3', direcao: 'DOWN', precisao: _valorSlider);
                   } else {
-                    cServo.calcAngServo('S3', 'DOWN', _valorSlider);
+                    cServo.calcAngServo(servo: 'S3', direcao: 'DOWN', precisao: _valorSlider);
                     ip.write(cServo.servoComando);
                   }
                 })

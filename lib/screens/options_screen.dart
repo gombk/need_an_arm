@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../providers/comandos_provider.dart';
 import '../widgets/drawer.dart';
+import '../widgets/options_card.dart';
 
 class OptionsScreen extends StatefulWidget {
   OptionsScreen({Key key}) : super(key: key);
@@ -24,35 +25,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
   bool _changePort = false;
   TextEditingController portController;
   TextEditingController ipController;
-
-  void _savePrefIP() async {
-    // pega os valores salvos
-    final prefs = await SharedPreferences.getInstance();
-    print(prefs);
-
-    // seta o valor
-    setState(() {
-      prefs.setBool('fixip', _fixateIP);
-    });
-  }
-
-  void _readPrefIP() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // tenta ler o dado da prefKey, se não existir retorna um 0
-    setState(() {
-      final readPref = prefs.getBool('fixip') ?? 0;
-    });
-  }
-
-  void _removePrefIP() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // remove a preferência salva
-    setState(() {
-      prefs.remove('fixip');
-    });
-  }
+  GlobalKey _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -74,48 +47,51 @@ class _OptionsScreenState extends State<OptionsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            optionsBlueprint('Tema escuro', _darkTheme, (bool newValue) {
-              setState(() {
-                _darkTheme = !_darkTheme;
-                newValue = _darkTheme;
-              });
-            }),
-            optionsBlueprint('Fixar IP', _fixateIP, (bool newValue) {
-              setState(() {
-                _readPrefIP();
-                _fixateIP = !_fixateIP;
-                newValue = _fixateIP;
-              });
-            }),
+            OptionsCard(
+                title: 'Tema escuro', switchValue: _darkTheme, switchKey: null),
+            OptionsCard(
+                title: 'Fixar IP',
+                switchValue: _fixateIP,
+                switchKey: (bool newValue) {
+                  setState(() {
+                    _fixateIP = !_fixateIP;
+                    newValue = _fixateIP;
+                  });
+                }),
             _fixateIP
-                ? Card(
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autocorrect: false,
-                        autofocus: true,
-                        decoration:
-                            const InputDecoration(labelText: 'Insira um IP'),
-                        keyboardType: TextInputType.text,
-                        controller: ipController,
-                        onFieldSubmitted: (_) {},
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Por favor, insira uma IP';
-                          }
-                          return null;
-                        },
+                ? Form(
+                    key: _formKey,
+                    child: Card(
+                      elevation: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          autocorrect: false,
+                          autofocus: true,
+                          decoration:
+                              const InputDecoration(labelText: 'Insira um IP'),
+                          keyboardType: TextInputType.numberWithOptions(),
+                          controller: ipController,
+                          onFieldSubmitted: (_) {},
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Por favor, insira uma IP';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                  )
+                    ))
                 : Column(),
-            optionsBlueprint('Trocar porta', _changePort, (bool newValue) {
-              setState(() {
-                _changePort = !_changePort;
-                newValue = _changePort;
-              });
-            }),
+            OptionsCard(
+                title: 'Trocar porta',
+                switchValue: _changePort,
+                switchKey: (bool newValue) {
+                  setState(() {
+                    _changePort = !_changePort;
+                    newValue = _changePort;
+                  });
+                }),
             _changePort
                 ? Card(
                     elevation: 3,
@@ -146,28 +122,22 @@ class _OptionsScreenState extends State<OptionsScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(FontAwesomeIcons.save),
         onPressed: () {
-          Fluttertoast.showToast(msg: 'TODO: Salvar opções');
+          saveIp(ipController.text);
         },
       ),
     );
   }
+}
 
-  Widget optionsBlueprint(String title, bool switchValue, Function switchKey) {
-    return Card(
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(title),
-            Switch(
-              value: switchValue,
-              onChanged: switchKey,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+Future<bool> saveIp(String ip) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('ip', ip);
+
+  return true;
+}
+
+Future<String> getIp() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return prefs.getString('ip');
 }

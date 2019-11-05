@@ -54,17 +54,18 @@ class ComandosProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void calcAngServo(String servo, String direcao, int precisao) {
+  void calcAngServo({String servo, String direcao, int precisao, int delay}) {
     // ############## Servo 1 START ##############
     if (servo == 'S1' && direcao == 'D') {
       _angServo += precisao;
+      _delayValue = delay;
 
       if (_angServo >= 180) {
         _angServo = 180;
       }
 
       if (_isRecording) {
-        comandos.add('W:A:$_angServo:$precisao');
+        comandos.add('W:A:$_angServo:$delay');
         _servo = 'W:A:$_angServo:$precisao';
       } else {
         _servo = 'A:$_angServo:$precisao';
@@ -81,7 +82,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:A:$_angServo:$precisao');
+        comandos.add('W:A:$_angServo:$delay');
         _servo = 'W:A:$_angServo:$precisao';
       } else {
         _servo = 'A:$_angServo:$precisao';
@@ -103,8 +104,8 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:C:$_angServo:$precisao');
         _servo = 'W:C:$_angServo:$precisao';
+        comandos.add('W:C:$_angServo:$delay');
       } else {
         _servo = 'C:$_angServo:$precisao';
       }
@@ -120,7 +121,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:C:$_angServo:$precisao');
+        comandos.add('W:C:$_angServo:$delay');
         _servo = 'W:C:$_angServo:$precisao';
       } else {
         _servo = 'C:$_angServo:$precisao';
@@ -142,7 +143,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:D:$_angServo:$precisao');
+        comandos.add('W:D:$_angServo:$delay');
         _servo = 'W:D:$_angServo:$precisao';
       } else {
         _servo = 'D:$_angServo:$precisao';
@@ -159,7 +160,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:D:$_angServo:$precisao');
+        comandos.add('W:D:$_angServo:$delay');
         _servo = 'W:D:$_angServo:$precisao';
       } else {
         _servo = 'D:$_angServo:$precisao';
