@@ -11,6 +11,7 @@ import './screens/recording_screen.dart';
 
 import './providers/comandos_provider.dart';
 import './providers/settings_drawer_provider.dart';
+import './providers/settings_provider.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([
@@ -25,11 +26,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: <SingleChildCloneableWidget>[
-        ChangeNotifierProvider<ComandosProvider>(
-          builder: (_) => ComandosProvider(),
+        ChangeNotifierProvider.value(
+          value: ComandosProvider(),
         ),
-        ChangeNotifierProvider<SettingsDrawerProvider>(
-          builder: (_) => SettingsDrawerProvider(),
+        ChangeNotifierProvider.value(
+          value: SettingsDrawerProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: SettingsProvider(),
         ),
       ],
       child: MaterialApp(

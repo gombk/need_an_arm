@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../providers/comandos_provider.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/drawer.dart';
 import '../widgets/options_card.dart';
 
@@ -23,22 +20,81 @@ class _OptionsScreenState extends State<OptionsScreen> {
   bool _darkTheme = false;
   bool _fixateIP = false;
   bool _changePort = false;
-  TextEditingController portController;
-  TextEditingController ipController;
-  GlobalKey _formKey = GlobalKey<FormState>();
+
+  String _ip = '';
+  String _port = '';
+
+  final portController = TextEditingController();
+  final ipController = TextEditingController();
+  final _formIPKey = GlobalKey<FormState>();
+  final _formPortKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((onValue) {
+      Provider.of<SettingsProvider>(context).getIp().then(getIp);
+      Provider.of<SettingsProvider>(context).getPort().then(getPort);
+      Provider.of<SettingsProvider>(context).switchIp().then(updateIpSwitch);
+      Provider.of<SettingsProvider>(context)
+          .switchPort()
+          .then(updatePortSwitch);
+    });
+    super.initState();
+  }
+
+  void getIp(String ip) {
+    setState(() {
+      _ip = ip;
+    });
+  }
+
+  void getPort(String port) {
+    setState(() {
+      _port = port;
+    });
+  }
+
+  void updateIpSwitch(bool fixIp) {
+    setState(() {
+      _fixateIP = fixIp;
+    });
+  }
+
+  void updatePortSwitch(bool fixPort) {
+    setState(() {
+      _changePort = fixPort;
+    });
+  }
+
+  void saveValues() {
+    if (_changePort && _fixateIP) if (_formIPKey.currentState.validate() &&
+        _formPortKey.currentState.validate())
+      Fluttertoast.showToast(msg: 'Opções salvas com sucesso');
+
+    if (_fixateIP) if (_formIPKey.currentState.validate()) {
+      Fluttertoast.showToast(msg: 'IP salvo com sucesso');
+      Provider.of<SettingsProvider>(context).saveIp(ipController.text);
+      print(ipController.text);
+    }
+
+    if (_changePort) if (_formPortKey.currentState.validate()) {
+      Fluttertoast.showToast(msg: 'Porta salva com sucesso');
+      Provider.of<SettingsProvider>(context).savePort(portController.text);
+      print(portController.text);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final optionsProvider = Provider.of<ComandosProvider>(context);
+    final settings = Provider.of<SettingsProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Opções'),
         actions: <Widget>[
           IconButton(
             icon: Icon(FontAwesomeIcons.save),
-            onPressed: () {
-              Fluttertoast.showToast(msg: 'Preferências salvas');
-            },
+            onPressed: saveValues,
+            
           ),
         ],
       ),
@@ -57,10 +113,11 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     _fixateIP = !_fixateIP;
                     newValue = _fixateIP;
                   });
+                  settings.saveSwitchIp(_fixateIP);
                 }),
             _fixateIP
                 ? Form(
-                    key: _formKey,
+                    key: _formIPKey,
                     child: Card(
                       elevation: 3,
                       child: Padding(
@@ -72,10 +129,15 @@ class _OptionsScreenState extends State<OptionsScreen> {
                               const InputDecoration(labelText: 'Insira um IP'),
                           keyboardType: TextInputType.numberWithOptions(),
                           controller: ipController,
-                          onFieldSubmitted: (_) {},
                           validator: (value) {
+                            String padraoIP =
+                                r'(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)';
+                            RegExp regExp = RegExp(padraoIP);
+
                             if (value.isEmpty) {
-                              return 'Por favor, insira uma IP';
+                              return 'Por favor, insira um IP';
+                            } else if (!regExp.hasMatch(value)) {
+                              return 'Insira um IP no padrão correto (ex: 1.1.1.1)';
                             }
                             return null;
                           },
@@ -91,26 +153,34 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     _changePort = !_changePort;
                     newValue = _changePort;
                   });
+                  settings.saveSwitchPort(_changePort);
                 }),
             _changePort
                 ? Card(
                     elevation: 3,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autocorrect: false,
-                        autofocus: true,
-                        decoration:
-                            const InputDecoration(labelText: 'Insira a Porta'),
-                        keyboardType: TextInputType.number,
-                        controller: portController,
-                        onFieldSubmitted: (_) {},
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Por favor, insira uma porta';
-                          }
-                          return null;
-                        },
+                      child: Form(
+                        key: _formPortKey,
+                        child: TextFormField(
+                          autocorrect: false,
+                          autofocus: true,
+                          decoration: const InputDecoration(
+                              labelText: 'Insira a Porta'),
+                          keyboardType: TextInputType.number,
+                          controller: portController,
+                          validator: (value) {
+                            String padraoPorta = r'(\b\d{1,4}\b)';
+                            RegExp regExp = RegExp(padraoPorta);
+
+                            if (value.isEmpty) {
+                              return 'Por favor, insira uma porta';
+                            } else if (!regExp.hasMatch(value)) {
+                              return 'Apenas números são aceitos';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
                     ),
                   )
@@ -121,23 +191,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
       drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         child: Icon(FontAwesomeIcons.save),
-        onPressed: () {
-          saveIp(ipController.text);
-        },
+        onPressed: saveValues,
       ),
     );
   }
-}
-
-Future<bool> saveIp(String ip) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('ip', ip);
-
-  return true;
-}
-
-Future<String> getIp() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  return prefs.getString('ip');
 }
