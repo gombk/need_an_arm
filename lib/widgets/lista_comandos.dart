@@ -16,6 +16,7 @@ class _ListaComandosState extends State<ListaComandos> {
     final cmdProvider = Provider.of<ComandosProvider>(context);
 
     return ListView.builder(
+      itemCount: cmdProvider.cmd.length,
       itemBuilder: (ctx, i) {
         return Column(
           children: <Widget>[
@@ -23,7 +24,7 @@ class _ListaComandosState extends State<ListaComandos> {
               child: Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: Text(
-                  '${cmdProvider.comandos[i]}',
+                  '${cmdProvider.cmd[i]}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -66,7 +67,6 @@ class _ListaComandosState extends State<ListaComandos> {
           ],
         );
       },
-      itemCount: cmdProvider.cmd.length,
     );
   }
 }

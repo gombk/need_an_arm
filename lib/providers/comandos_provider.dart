@@ -68,7 +68,11 @@ class ComandosProvider with ChangeNotifier {
         comandos.add('W:A:$_angServo:$delay');
         _servo = 'W:A:$_angServo:$precisao';
       } else {
+        comandos.add('A:$_angServo:$precisao');
         _servo = 'A:$_angServo:$precisao';
+        for (var item in comandos) {
+          print(item);
+        }
       }
 
       print(_servo);
@@ -85,6 +89,7 @@ class ComandosProvider with ChangeNotifier {
         comandos.add('W:A:$_angServo:$delay');
         _servo = 'W:A:$_angServo:$precisao';
       } else {
+        comandos.add('A:$_angServo:$precisao');
         _servo = 'A:$_angServo:$precisao';
       }
 
@@ -107,6 +112,7 @@ class ComandosProvider with ChangeNotifier {
         _servo = 'W:C:$_angServo:$precisao';
         comandos.add('W:C:$_angServo:$delay');
       } else {
+        comandos.add('C:$_angServo:$precisao');
         _servo = 'C:$_angServo:$precisao';
       }
 
@@ -124,6 +130,7 @@ class ComandosProvider with ChangeNotifier {
         comandos.add('W:C:$_angServo:$delay');
         _servo = 'W:C:$_angServo:$precisao';
       } else {
+        comandos.add('C:$_angServo:$precisao');
         _servo = 'C:$_angServo:$precisao';
       }
 
@@ -146,6 +153,7 @@ class ComandosProvider with ChangeNotifier {
         comandos.add('W:D:$_angServo:$delay');
         _servo = 'W:D:$_angServo:$precisao';
       } else {
+        comandos.add('D:$_angServo:$precisao');
         _servo = 'D:$_angServo:$precisao';
       }
 
@@ -163,6 +171,7 @@ class ComandosProvider with ChangeNotifier {
         comandos.add('W:D:$_angServo:$delay');
         _servo = 'W:D:$_angServo:$precisao';
       } else {
+        comandos.add('D:$_angServo:$precisao');
         _servo = 'D:$_angServo:$precisao';
       }
 

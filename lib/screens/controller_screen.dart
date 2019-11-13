@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:need_an_arm/widgets/connection.dart';
+import 'package:need_an_arm/widgets/lista_comandos.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/comandos_provider.dart';
@@ -162,11 +163,13 @@ class ControllerScreenState extends State<ControllerScreen> {
                   _servoSelecionado == ServoAtivo.Medio
               ? ControlesWidget(Icons.arrow_drop_up, 110, () {
                   if (_servoSelecionado == ServoAtivo.Medio) {
-                    cServo.calcAngServo(servo: 'S3', direcao: 'UP', precisao: _valorSlider);
-                    ip.write(cServo.servoComando);
+                    cServo.calcAngServo(
+                        servo: 'S3', direcao: 'UP', precisao: _valorSlider);
+                    // ip.write(cServo.servoComando);
                   } else {
-                    cServo.calcAngServo(servo: 'S2', direcao: 'UP', precisao: _valorSlider);
-                    ip.write(cServo.servoComando);
+                    cServo.calcAngServo(
+                        servo: 'S2', direcao: 'UP', precisao: _valorSlider);
+                    // ip.write(cServo.servoComando);
                   }
                 })
               : ControlesWidget(
@@ -177,17 +180,19 @@ class ControllerScreenState extends State<ControllerScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ControlesWidget(Icons.arrow_left, 110, () {
-                      cServo.calcAngServo(servo: 'S1', direcao: 'E', precisao: _valorSlider);
-                      ip.write(cServo.servoComando);
+                      cServo.calcAngServo(
+                          servo: 'S1', direcao: 'E', precisao: _valorSlider);
+                      // ip.write(cServo.servoComando);
                     }), // controle esquerda
                     ControlesWidget(Icons.radio_button_unchecked, 100, () {
                       cServo.garra();
-                      ip.write(cServo.servoComando);
+                      // ip.write(cServo.servoComando);
                       print('Garra/Grab');
                     }), // controle grab
                     ControlesWidget(Icons.arrow_right, 110, () {
-                      cServo.calcAngServo(servo: 'S1', direcao: 'D', precisao: _valorSlider);
-                      ip.write(cServo.servoComando);
+                      cServo.calcAngServo(
+                          servo: 'S1', direcao: 'D', precisao: 5);
+                      // ip.write(cServo.servoComando);
                     }) // controle direita
                   ],
                 )
@@ -201,7 +206,7 @@ class ControllerScreenState extends State<ControllerScreen> {
                       100,
                       () {
                         cServo.garra();
-                        ip.write(cServo.servoComando);
+                        // ip.write(cServo.servoComando);
                       },
                     ), // controle grab
                     ControlesWidget(
@@ -214,10 +219,12 @@ class ControllerScreenState extends State<ControllerScreen> {
               // controle down
               ControlesWidget(Icons.arrow_drop_down, 110, () {
                   if (_servoSelecionado == ServoAtivo.Medio) {
-                    cServo.calcAngServo(servo: 'S3', direcao: 'DOWN', precisao: _valorSlider);
+                    cServo.calcAngServo(
+                        servo: 'S3', direcao: 'DOWN', precisao: _valorSlider);
                   } else {
-                    cServo.calcAngServo(servo: 'S3', direcao: 'DOWN', precisao: _valorSlider);
-                    ip.write(cServo.servoComando);
+                    cServo.calcAngServo(
+                        servo: 'S3', direcao: 'DOWN', precisao: _valorSlider);
+                    // ip.write(cServo.servoComando);
                   }
                 })
               : ControlesWidget(Icons.arrow_drop_down, 110, null),
@@ -225,17 +232,24 @@ class ControllerScreenState extends State<ControllerScreen> {
           // slider de velocidade
           Text('Selecione a precisão'),
           Slider(
-            activeColor: Theme.of(context).accentColor,
+            activeColor: Colors.blue,
             value: _valorSlider.toDouble(),
             min: 0.0,
-            max: 90.0,
-            divisions: 90,
+            max: 180.0,
+            divisions: 180,
             label: '$_valorSlider',
             onChanged: (double newValue) {
               setState(() {
                 _valorSlider = newValue.round();
               });
             },
+          ),
+          Container(
+            height: 150,
+            width: 300,
+            child: Card(
+              child: ListaComandos(),
+            ),
           ),
         ],
       ),

@@ -128,14 +128,20 @@ class _RecordingScreenState extends State<RecordingScreen> {
                       setState(() {
                         updateSharedPrefs();
                         cmdProvider.calcAngServo(
-                            servo: 'S3', direcao: 'UP', delay: _delay, precisao: _precisao);
+                            servo: 'S3',
+                            direcao: 'UP',
+                            delay: _delay,
+                            precisao: _precisao);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     } else {
                       setState(() {
                         updateSharedPrefs();
                         cmdProvider.calcAngServo(
-                            servo: 'S2', direcao: 'UP', delay: _delay, precisao: _precisao);
+                            servo: 'S2',
+                            direcao: 'UP',
+                            delay: _delay,
+                            precisao: _precisao);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     }
@@ -150,7 +156,11 @@ class _RecordingScreenState extends State<RecordingScreen> {
                       ControlesWidget(Icons.arrow_left, 110, () {
                         setState(() {
                           updateSharedPrefs();
-                          cmdProvider.calcAngServo(servo: 'S1', direcao: 'E', delay: _delay, precisao: _precisao);
+                          cmdProvider.calcAngServo(
+                              servo: 'S1',
+                              direcao: 'E',
+                              delay: _delay,
+                              precisao: _precisao);
                         });
                         cmdProvider.socket.write(cmdProvider.servoComando);
                       }), // controle esquerda
@@ -164,7 +174,11 @@ class _RecordingScreenState extends State<RecordingScreen> {
                       ControlesWidget(Icons.arrow_right, 110, () {
                         setState(() {
                           updateSharedPrefs();
-                          cmdProvider.calcAngServo(servo: 'S1', direcao: 'D', delay: _delay, precisao: _precisao);
+                          cmdProvider.calcAngServo(
+                              servo: 'S1',
+                              direcao: 'D',
+                              delay: _delay,
+                              precisao: _precisao);
                         });
                         cmdProvider.socket.write(cmdProvider.servoComando);
                       }) // controle direita
@@ -194,13 +208,21 @@ class _RecordingScreenState extends State<RecordingScreen> {
                     if (_servoSelecionado == ServoAtivo.Medio) {
                       setState(() {
                         updateSharedPrefs();
-                        cmdProvider.calcAngServo(servo: 'S3', direcao: 'DOWN', delay: _delay, precisao: _precisao);
+                        cmdProvider.calcAngServo(
+                            servo: 'S3',
+                            direcao: 'DOWN',
+                            delay: _delay,
+                            precisao: _precisao);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     } else {
                       setState(() {
                         updateSharedPrefs();
-                        cmdProvider.calcAngServo(servo: 'S2', direcao: 'DOWN', delay: _delay, precisao: _precisao);
+                        cmdProvider.calcAngServo(
+                            servo: 'S2',
+                            direcao: 'DOWN',
+                            delay: _delay,
+                            precisao: _precisao);
                       });
                       cmdProvider.socket.write(cmdProvider.servoComando);
                     }

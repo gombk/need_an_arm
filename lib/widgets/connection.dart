@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/comandos_provider.dart';
 
 class ConnectionWidget extends StatefulWidget {
   final TextEditingController ipController;
