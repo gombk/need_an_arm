@@ -12,6 +12,7 @@ import './screens/recording_screen.dart';
 import './providers/comandos_provider.dart';
 import './providers/settings_drawer_provider.dart';
 import './providers/settings_provider.dart';
+import './models/comandos.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: SettingsProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Comandos(),
         ),
       ],
       child: MaterialApp(

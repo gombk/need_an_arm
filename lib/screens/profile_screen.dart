@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/drawer.dart';
+import '../widgets/profile_grid.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/Profile-Screen';
@@ -16,10 +17,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: Text('Perfis'),
       ),
-      body: Center(
-        child: Text('Perfis'),
-      ),
       drawer: AppDrawer(),
+      body: Center(
+        child: ProfileGrid(),
+      ),
     );
   }
 }

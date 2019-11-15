@@ -1,22 +1,22 @@
 import 'dart:io';
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:need_an_arm/models/comandos.dart';
 
 class ComandosProvider with ChangeNotifier {
   Socket socket;
   bool _isConnected = false;
-  int _angServo = 0;
   String _servo;
   bool _isRecording = false;
   bool isOpen = true;
-  List<String> comandos = [];
+  List<Comandos> comandos = [];
   int _precisionValue = 0;
   int _delayValue = 0;
+  int _angServo = 0;
 
   // GETTERS START
-  List<String> get cmd {
+  List<Comandos> get cmd {
     return [...comandos];
   }
 
@@ -49,7 +49,7 @@ class ComandosProvider with ChangeNotifier {
   }
 
   void resetComando() {
-    comandos.removeWhere((comandos) => comandos.length > 0);
+    comandos.clear();
 
     notifyListeners();
   }
@@ -65,10 +65,26 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:A:$_angServo:$delay');
+        comandos.add(
+          Comandos(
+            // id: ,
+            tipo: 'W',
+            servo: 'A',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
+
         _servo = 'W:A:$_angServo:$precisao';
       } else {
-        comandos.add('A:$_angServo:$precisao');
+        comandos.add(
+          Comandos(
+            // id: ,
+            servo: 'A',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'A:$_angServo:$precisao';
         for (var item in comandos) {
           print(item);
@@ -86,10 +102,26 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:A:$_angServo:$delay');
+        comandos.add(
+          Comandos(
+            // id: ,
+            tipo: 'W',
+            servo: 'A',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
+
         _servo = 'W:A:$_angServo:$precisao';
       } else {
-        comandos.add('A:$_angServo:$precisao');
+        comandos.add(
+          Comandos(
+            // id: ,
+            servo: 'A',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'A:$_angServo:$precisao';
       }
 
@@ -110,9 +142,24 @@ class ComandosProvider with ChangeNotifier {
 
       if (_isRecording) {
         _servo = 'W:C:$_angServo:$precisao';
-        comandos.add('W:C:$_angServo:$delay');
+        comandos.add(
+          Comandos(
+            // id: ,
+            tipo: 'W',
+            servo: 'C',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
       } else {
-        comandos.add('C:$_angServo:$precisao');
+        comandos.add(
+          Comandos(
+            // id: ,
+            servo: 'C',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'C:$_angServo:$precisao';
       }
 
@@ -127,10 +174,25 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:C:$_angServo:$delay');
+        comandos.add(
+          Comandos(
+            // id: ,
+            tipo: 'W',
+            servo: 'C',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'W:C:$_angServo:$precisao';
       } else {
-        comandos.add('C:$_angServo:$precisao');
+        comandos.add(
+          Comandos(
+            // id: ,
+            servo: 'C',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'C:$_angServo:$precisao';
       }
 
@@ -150,10 +212,25 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:D:$_angServo:$delay');
+        comandos.add(
+          Comandos(
+            // id: ,
+            tipo: 'W',
+            servo: 'D',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'W:D:$_angServo:$precisao';
       } else {
-        comandos.add('D:$_angServo:$precisao');
+        comandos.add(
+          Comandos(
+            // id: ,
+            servo: 'D',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'D:$_angServo:$precisao';
       }
 
@@ -168,10 +245,25 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add('W:D:$_angServo:$delay');
+        comandos.add(
+          Comandos(
+            // id: ,
+            tipo: 'W',
+            servo: 'D',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'W:D:$_angServo:$precisao';
       } else {
-        comandos.add('D:$_angServo:$precisao');
+        comandos.add(
+          Comandos(
+            // id: ,
+            servo: 'D',
+            angulo: _angServo,
+            delay: delay,
+          ),
+        );
         _servo = 'D:$_angServo:$precisao';
       }
 
@@ -193,32 +285,6 @@ class ComandosProvider with ChangeNotifier {
       print("$_servo\n$isOpen");
       isOpen = true;
     }
-  }
-
-  void onLoading(BuildContext ctx, String host) {
-    showDialog(
-      context: ctx,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                Text('Conectando em $host'),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pop(ctx); //pop dialog
-      connect(host);
-    });
   }
 
   void connect(String host) async {
