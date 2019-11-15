@@ -50,5 +50,5 @@ Future<bool> setValorSlidersDrawer() async {
   prefs.setInt('precision', 0);
   prefs.setInt('delay', 0);
 
-  return prefs.commit();
+  return true;
 }

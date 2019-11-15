@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,6 +63,13 @@ class _RecordingScreenState extends State<RecordingScreen> {
       appBar: AppBar(
         title: Text('Need an Arm - Gravando'),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: () {
+              cmdProvider.addProfile();
+              Fluttertoast.showToast(msg: 'Perfil salvo');
+            },
+          ),
           IconButton(
             icon: Icon(Icons.restore_page),
             onPressed: () {

@@ -19,12 +19,12 @@ class ProfileGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final comandosData = Provider.of<ComandosProvider>(context);
-    final comandos = comandosData.cmd;
+    final perfilData = Provider.of<ComandosProvider>(context);
+    final perfil = perfilData.perfil;
 
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
-      itemCount: 1, // comandos.length
+      itemCount: perfil.length,
       itemBuilder: (ctx, i) => Center(
         child: ProfileItem(),
       ),

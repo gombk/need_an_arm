@@ -18,13 +18,14 @@ class _ListaComandosState extends State<ListaComandos> {
     return ListView.builder(
       itemCount: cmdProvider.cmd.length,
       itemBuilder: (ctx, i) {
+        final cmd = cmdProvider.cmd[i];
         return Column(
           children: <Widget>[
             Dismissible(
               child: Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: Text(
-                  '${cmdProvider.cmd[i]}',
+                  '${cmd.tipo}:${cmd.servo}:${cmd.angulo}:${cmd.delay}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

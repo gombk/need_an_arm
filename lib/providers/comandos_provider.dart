@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:need_an_arm/models/comandos.dart';
+
+import '../models/Perfil.dart';
+import '../models/comandos.dart';
 
 class ComandosProvider with ChangeNotifier {
   Socket socket;
@@ -10,35 +12,26 @@ class ComandosProvider with ChangeNotifier {
   String _servo;
   bool _isRecording = false;
   bool isOpen = true;
-  List<Comandos> comandos = [];
+  List<Comandos> _comandos = [];
+  List<Perfil> _perfil = [];
   int _precisionValue = 0;
   int _delayValue = 0;
   int _angServo = 0;
 
   // GETTERS START
-  List<Comandos> get cmd {
-    return [...comandos];
-  }
+  List<Comandos> get cmd => [..._comandos];
 
-  String get servoComando {
-    return _servo;
-  }
+  List<Perfil> get perfil => [..._perfil];
 
-  int get angServo {
-    return _angServo;
-  }
+  String get servoComando => _servo;
 
-  bool get connected {
-    return _isConnected;
-  }
+  int get angServo => _angServo;
 
-  int get precisionValue {
-    return _precisionValue;
-  }
+  bool get connected => _isConnected;
 
-  int get delayValue {
-    return _delayValue;
-  }
+  int get precisionValue => _precisionValue;
+
+  int get delayValue => _delayValue;
 
   // GETTERS END
 
@@ -49,7 +42,19 @@ class ComandosProvider with ChangeNotifier {
   }
 
   void resetComando() {
-    comandos.clear();
+    _comandos.clear();
+
+    notifyListeners();
+  }
+
+  void addProfile() {
+    _perfil.insert(
+      0,
+      Perfil(
+        id: 0,
+        name: 'Teste',
+      ),
+    );
 
     notifyListeners();
   }
@@ -65,7 +70,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             tipo: 'W',
@@ -77,7 +82,7 @@ class ComandosProvider with ChangeNotifier {
 
         _servo = 'W:A:$_angServo:$precisao';
       } else {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             servo: 'A',
@@ -86,9 +91,6 @@ class ComandosProvider with ChangeNotifier {
           ),
         );
         _servo = 'A:$_angServo:$precisao';
-        for (var item in comandos) {
-          print(item);
-        }
       }
 
       print(_servo);
@@ -102,7 +104,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             tipo: 'W',
@@ -114,7 +116,7 @@ class ComandosProvider with ChangeNotifier {
 
         _servo = 'W:A:$_angServo:$precisao';
       } else {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             servo: 'A',
@@ -142,7 +144,7 @@ class ComandosProvider with ChangeNotifier {
 
       if (_isRecording) {
         _servo = 'W:C:$_angServo:$precisao';
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             tipo: 'W',
@@ -152,7 +154,7 @@ class ComandosProvider with ChangeNotifier {
           ),
         );
       } else {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             servo: 'C',
@@ -174,7 +176,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             tipo: 'W',
@@ -185,7 +187,7 @@ class ComandosProvider with ChangeNotifier {
         );
         _servo = 'W:C:$_angServo:$precisao';
       } else {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             servo: 'C',
@@ -212,7 +214,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             tipo: 'W',
@@ -223,7 +225,7 @@ class ComandosProvider with ChangeNotifier {
         );
         _servo = 'W:D:$_angServo:$precisao';
       } else {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             servo: 'D',
@@ -245,7 +247,7 @@ class ComandosProvider with ChangeNotifier {
       }
 
       if (_isRecording) {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             tipo: 'W',
@@ -256,7 +258,7 @@ class ComandosProvider with ChangeNotifier {
         );
         _servo = 'W:D:$_angServo:$precisao';
       } else {
-        comandos.add(
+        _comandos.add(
           Comandos(
             // id: ,
             servo: 'D',

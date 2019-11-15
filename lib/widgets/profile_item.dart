@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-import '../models/comandos.dart';
+import '../models/Perfil.dart';
 
 class ProfileItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cmd = Provider.of<Comandos>(context, listen: false);
+    final profile = Provider.of<Perfil>(context, listen: false);
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(20),
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            Fluttertoast.showToast(msg: '${cmd.id}');
+            Fluttertoast.showToast(msg: '${profile.id}');
           },
           child: Container(
             decoration: BoxDecoration(
@@ -34,7 +34,7 @@ class ProfileItem extends StatelessWidget {
         ),
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          title: Text('Perfil ${cmd.id}', textAlign: TextAlign.center),
+          title: Text('Perfil ${profile.id}', textAlign: TextAlign.center),
         ),
       ),
     );

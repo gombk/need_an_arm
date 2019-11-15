@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 
-class Perfil {
-  final String id;
+class Perfil with ChangeNotifier {
+  final int id;
   final String name;
-  bool isFavorite;
+  bool isActive;
 
   Perfil({
-    @required this.id,
-    @required this.name,
-    this.isFavorite = false,
+    this.id,
+    this.name,
+    this.isActive = false,
   });
 }
