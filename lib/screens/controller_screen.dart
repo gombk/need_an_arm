@@ -244,13 +244,13 @@ class ControllerScreenState extends State<ControllerScreen> {
               });
             },
           ),
-          Container(
-            height: 150,
-            width: 300,
-            child: Card(
-              child: ListaComandos(),
-            ),
-          ),
+          // Container(
+          //   height: 150,
+          //   width: 300,
+          //   child: Card(
+          //     child: ListaComandos(),
+          //   ),
+          // ),
         ],
       ),
     );
