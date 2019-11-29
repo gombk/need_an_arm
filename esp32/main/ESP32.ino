@@ -34,9 +34,9 @@ Servo myservo_3;
 Servo myservo_4;
 
 int servoPin_1 = 2;
-int servoPin_2 = 4;
-int servoPin_3 = 12;
-int servoPin_4 = 14;
+int servoPin_2 = 14;
+int servoPin_3 = 15;
+int servoPin_4 = 19;
 
 int servo_1= 0; //ServoBase
 int servo_2= 0; //ServoAnteBraço
@@ -50,8 +50,8 @@ WiFiServer wifiServer(80);
 //const char* ssid = "PALINI";
 //const char* pass = "us7pe10sf2pa5";
 
-const char* ssid = "Heimskr";
-const char* pass = "THEENDOFTIMES";
+const char* ssid = "ESP32";
+const char* pass = "10203040";
 
 
 void drawLines() {
@@ -173,6 +173,22 @@ void setup() {
     
     //listDir(SPIFFS, "/", 0);
     //writeFile(SPIFFS, "/commands.txt", "");
+    writeFile(SPIFFS, "/commands.txt",  "A:0:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
+    appendFile(SPIFFS, "/commands.txt", "A:180:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
+    appendFile(SPIFFS, "/commands.txt", "B:0:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
+    appendFile(SPIFFS, "/commands.txt", "B:180:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
+    appendFile(SPIFFS, "/commands.txt", "C:0:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
+    appendFile(SPIFFS, "/commands.txt", "C:180:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
+    appendFile(SPIFFS, "/commands.txt", "D:0:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
+    appendFile(SPIFFS, "/commands.txt", "D:180:1000");
+    appendFile(SPIFFS, "/commands.txt", "\r\n");
 }
 
 void Movement(char* command, String modeOp)
@@ -258,7 +274,7 @@ void Movement(char* command, String modeOp)
               display.drawString(0, 30, "Servo_1: " + String(servo_1));
               display.drawString(0, 40, "Servo_2: " + String(servo_2));
               display.drawString(0, 50, "Servo_3: " + String(servo_3));
-              display.drawString(65, 30, "Claw: " +   String(servo_3));
+              display.drawString(65, 30, "Claw: " +   String(servo_4));
               display.drawString(65, 40, "Vel: " +   String(VelServo));
               display.drawString(65, 50, "Temp: " + String(((temprature_sens_read() - 32) / 1.8)));
               display.display();
